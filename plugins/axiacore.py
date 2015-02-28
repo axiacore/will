@@ -3,6 +3,7 @@ from will.plugin import WillPlugin
 from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
 
 from jira.client import JIRA
+from jira.exceptions import JIRAError
 
 
 class AxiaCorePlugin(WillPlugin):
@@ -19,9 +20,12 @@ class AxiaCorePlugin(WillPlugin):
             basic_auth=(settings.JIRA_USER, settings.JIRA_PASSWORD),
             options={'server': settings.JIRA_URL},
         )
-        url = '[{0}] {1}browse/{2}'.format(
-            jira.issue(key).fields.status.name,
-            settings.JIRA_URL,
-            key,
-        )
-        self.say(url, message=message)
+        try:
+            url = '[{0}] {1}browse/{2}'.format(
+                jira.issue(key).fields.status.name,
+                settings.JIRA_URL,
+                key,
+            )
+            self.say(url, message=message)
+        except JIRAError:
+            self.say('Issue {0} does not exist', color='red')
