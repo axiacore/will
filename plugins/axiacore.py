@@ -1,3 +1,5 @@
+import requests
+
 from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
@@ -16,7 +18,7 @@ class AxiaCorePlugin(WillPlugin):
         self.say(url, message=message)
 
     @hear('commit')
-    def must_commit(self, message):
+    def talk_on_commit(self, message):
         doc = pq(url='http://whatthecommit.com/')
         text = doc('#content p:first').text()
         self.say(
@@ -26,6 +28,12 @@ class AxiaCorePlugin(WillPlugin):
             ),
             message=message,
         )
+
+    @hear('pug')
+    def talk_on_pug(self, message):
+        req = requests.get('http://pugme.herokuapp.com/random')
+        if req.ok:
+            self.say(req.json()['pug'], message=message)
 
     @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
