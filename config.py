@@ -13,6 +13,7 @@
 # In case of conflict, you will see a warning message, and the value in this file will win.
 
 
+
 # ------------------------------------------------------------------------------------
 # Required settings
 # ------------------------------------------------------------------------------------
@@ -89,8 +90,7 @@ PLUGIN_BLACKLIST = [
 
 
 # The room will will talk to if the trigger is a webhook and he isn't told a specific room.
-# Default is the first of ROOMS.
-# DEFAULT_ROOM = 'Testing, Will Kahuna'
+DEFAULT_ROOM = 'AxiaCore'
 
 
 # Fully-qualified folders to look for templates in, beyond the two that
@@ -103,10 +103,9 @@ PLUGIN_BLACKLIST = [
 
 
 # User handles who are allowed to perform `admin_only` plugins.  Defaults to everyone.
-# ADMINS = [
-#     "steven",
-#     "levi",
-# ]
+ADMINS = [
+    "camilo",
+]
 
 # Disable SSL checks.  Strongly reccomended this is not set to True.
 # ALLOW_INSECURE_HIPCHAT_SERVER = False
@@ -120,5 +119,3 @@ PLUGIN_BLACKLIST = [
 
 # Logging level
 # LOGLEVEL = "DEBUG"
-
-
