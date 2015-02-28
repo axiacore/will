@@ -1,1 +1,2 @@
-will
+jira-python==0.16
+will==0.7.2

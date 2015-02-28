@@ -2,6 +2,8 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
 
+from jira.client import JIRA
+
 
 class AxiaCorePlugin(WillPlugin):
 
@@ -10,8 +12,16 @@ class AxiaCorePlugin(WillPlugin):
         url = 'https://s3.amazonaws.com/uploads.hipchat.com/50553/341552/g7rcdoer2w1Kv5X/miguel-approves.png'
         self.say(url, message=message)
 
-    @require_settings('JIRA_URL')
+    @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
     def link_jira_issue(self, message, key):
-        url = '{0}browse/{1}'.format(settings.JIRA_URL, key)
+        jira = JIRA(
+            basic_auth=(settings.JIRA_USER, settings.JIRA_PASSWORD),
+            options={'server': settings.JIRA_URL},
+        )
+        url = '[{0}] {1}browse/{2}'.format(
+            jira.issue(key).fields.status.name,
+            settings.JIRA_URL,
+            key,
+        )
         self.say(url, message=message)
