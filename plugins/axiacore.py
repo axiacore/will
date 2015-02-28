@@ -1,3 +1,4 @@
+import random
 import requests
 
 from will import settings
@@ -34,6 +35,15 @@ class AxiaCorePlugin(WillPlugin):
         req = requests.get('http://pugme.herokuapp.com/random')
         if req.ok:
             self.say(req.json()['pug'], message=message)
+
+    @hear('cute')
+    def talk_on_cute(self, message):
+        req = requests.get('http://www.reddit.com/r/aww/.json')
+        if req.ok:
+            self.say(
+                random.choice(req.json()['data']['children'])['data']['url'],
+                message=message
+            )
 
     @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
