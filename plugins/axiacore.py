@@ -19,7 +19,13 @@ class AxiaCorePlugin(WillPlugin):
     def must_commit(self, message):
         doc = pq(url='http://whatthecommit.com/')
         text = doc('#content p:first').text()
-        self.say(text, message=message)
+        self.say(
+            '@{0} try this commit message: {1}'.format(
+                message.sender.nick,
+                text,
+            ),
+            message=message,
+        )
 
     @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
