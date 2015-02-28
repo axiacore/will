@@ -2,6 +2,8 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
 
+from pyquery import PyQuery as pq
+
 from jira.client import JIRA
 from jira.exceptions import JIRAError
 
@@ -12,6 +14,12 @@ class AxiaCorePlugin(WillPlugin):
     def tell_what_i_think(self, message):
         url = 'https://s3.amazonaws.com/uploads.hipchat.com/50553/341552/g7rcdoer2w1Kv5X/miguel-approves.png'
         self.say(url, message=message)
+
+    @hear('commit')
+    def must_commit(self, message):
+        doc = pq(url='http://whatthecommit.com/')
+        text = doc('#content p:first').text()
+        self.say(text, message=message)
 
     @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
