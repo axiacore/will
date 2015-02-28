@@ -28,7 +28,7 @@ class AxiaCorePlugin(WillPlugin):
             )
             self.say(url, message=message)
         except JIRAError as exc:
-            if exc.status_code == '404':
+            if exc.status_code == 404:
                 self.say('Issue {0} does not exist'.format(key), color='red')
             else:
                 raise
