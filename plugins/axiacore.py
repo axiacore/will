@@ -45,6 +45,12 @@ class AxiaCorePlugin(WillPlugin):
                 message=message
             )
 
+    @hear('deploy')
+    def talk_on_deploy(self, message):
+        doc = pq(url='http://devopsreactions.tumblr.com/random')
+        self.say(doc('.post_title').text(), message=message)
+        self.say(doc('.item img').attr('src'), message=message)
+
     @require_settings('JIRA_URL', 'JIRA_USER', 'JIRA_PASSWORD')
     @hear('(\s|^)(?P<key>[A-Z]+-[0-9]+)', case_sensitive=True)
     def link_jira_issue(self, message, key):
