@@ -74,3 +74,8 @@ class AxiaCorePlugin(WillPlugin):
                 )
             else:
                 raise
+
+    @periodic(hour='17', minute='0', day_of_week='mon-fri')
+    def how_is_the_weather_in_bogota(self):
+        url = 'http://aplicaciones.canalclima.com/images/ipcam/cclima-bog-001/web/camera0.jpeg'
+        self.say(url)
