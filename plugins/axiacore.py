@@ -75,7 +75,11 @@ class AxiaCorePlugin(WillPlugin):
             else:
                 raise
 
-    @periodic(hour='17', minute='0', day_of_week='mon-fri')
-    def how_is_the_weather_in_bogota(self):
-        url = 'http://aplicaciones.canalclima.com/images/ipcam/cclima-bog-001/web/camera0.jpeg'
-        self.say(url)
+    @require_settings('DOOR_URL')
+    @respond_to('open the door')
+    def open_the_door(self, message):
+        req = requests.get(settings.DOOR_URL)
+        if req.ok:
+            self.reply(message, 'Say welcome %s!' % message.sender.nick)
+        else:
+            self.reply(message, 'I could not open the door', color='red')
