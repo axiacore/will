@@ -35,8 +35,8 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.item img').attr('src'), message=message)
 
     @randomly(
-        start_hour='9',
-        end_hour='17', day_of_week='mon-fri', num_times_per_day=2
+        start_hour=9,
+        end_hour=17, day_of_week='mon-fri', num_times_per_day=2
     )
     def random_fun(self, message):
         req = requests.get(
