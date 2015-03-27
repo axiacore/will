@@ -45,7 +45,11 @@ class AxiaCorePlugin(WillPlugin):
         )
         if req.ok:
             elem = random.choice(req.json()['data']['children'])
-            self.say(elem['data']['url'], message=message)
+            url = elem['data']['url']
+            if url.endswith('.gifv'):
+                url = url.replace('.gifv', '.gif')
+
+            self.say(url, message=message)
             self.say(elem['data']['title'], message=message)
 
     @require_settings('DOOR_URL')
