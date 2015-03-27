@@ -34,10 +34,11 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.post_title').text(), message=message)
         self.say(doc('.item img').attr('src'), message=message)
 
-    @randomly(
-        start_hour=9,
-        end_hour=17, day_of_week='mon-fri', num_times_per_day=2
-    )
+    # @randomly(
+    #     start_hour=9,
+    #     end_hour=17, day_of_week='mon-fri', num_times_per_day=2
+    # )
+    @hear('fun')
     def random_fun(self, message):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week'
