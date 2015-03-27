@@ -41,7 +41,8 @@ class AxiaCorePlugin(WillPlugin):
     @hear('fun')
     def fun_talk(self, message):
         req = requests.get(
-            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week'
+            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
+            headers={'User-Agent': 'Mozilla/5.0'},
         )
         if req.ok:
             elem = random.choice(req.json()['data']['children'])
@@ -52,7 +53,7 @@ class AxiaCorePlugin(WillPlugin):
             self.say(url, message=message)
             self.say(elem['data']['title'], message=message)
         else:
-            self.say(req.staus, message=message, color='red')
+            self.say(req.reason, message=message, color='red')
 
     @require_settings('DOOR_URL')
     @respond_to('open the door')
