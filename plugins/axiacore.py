@@ -26,7 +26,7 @@ class AxiaCorePlugin(WillPlugin):
     def talk_on_pug(self, message):
         req = requests.get('http://pugme.herokuapp.com/random')
         if req.ok:
-            self.say(req.json()['pug'], message=message)
+            self.say(req.json()['pug'])
 
     @hear('deploy')
     def talk_on_deploy(self, message):
@@ -34,12 +34,20 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.post_title').text(), message=message)
         self.say(doc('.item img').attr('src'), message=message)
 
-    # @randomly(
-    #     start_hour=9,
-    #     end_hour=17, day_of_week='mon-fri', num_times_per_day=2
-    # )
-    @randomly(start_hour=12, end_hour=13, day_of_week='mon-fri', num_times_per_day=10)
-    def fun_talk(self, message):
+    @require_settings('DOOR_URL')
+    @respond_to('open the door')
+    def open_the_door(self, message):
+        req = requests.get(settings.DOOR_URL)
+        if req.ok:
+            self.reply(message, 'Say welcome %s!' % message.sender.nick)
+        else:
+            self.reply(message, 'I could not open the door', color='red')
+
+    @randomly(
+        start_hour=9,
+        end_hour=16, day_of_week='mon-fri', num_times_per_day=2
+    )
+    def fun_talk(self):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
             headers={'User-Agent': 'Mozilla/5.0'},
@@ -50,16 +58,7 @@ class AxiaCorePlugin(WillPlugin):
             if url.endswith('.gifv'):
                 url = url.replace('.gifv', '.gif')
 
-            self.say(url, message=message)
-            self.say(elem['data']['title'], message=message)
+            self.say(url)
+            self.say(elem['data']['title'])
         else:
-            self.say(req.reason, message=message, color='red')
-
-    @require_settings('DOOR_URL')
-    @respond_to('open the door')
-    def open_the_door(self, message):
-        req = requests.get(settings.DOOR_URL)
-        if req.ok:
-            self.reply(message, 'Say welcome %s!' % message.sender.nick)
-        else:
-            self.reply(message, 'I could not open the door', color='red')
+            self.say(req.reason, color='red')
