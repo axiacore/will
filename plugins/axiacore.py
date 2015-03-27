@@ -39,7 +39,7 @@ class AxiaCorePlugin(WillPlugin):
     #     end_hour=17, day_of_week='mon-fri', num_times_per_day=2
     # )
     @hear('fun')
-    def random_fun(self, message):
+    def fun_talk(self, message):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week'
         )
