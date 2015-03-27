@@ -51,6 +51,8 @@ class AxiaCorePlugin(WillPlugin):
 
             self.say(url, message=message)
             self.say(elem['data']['title'], message=message)
+        else:
+            self.say(req.staus, message=message, color='red')
 
     @require_settings('DOOR_URL')
     @respond_to('open the door')
