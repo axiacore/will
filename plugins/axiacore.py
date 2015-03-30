@@ -43,26 +43,26 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not open the door', color='red')
 
-    @randomly(start_hour='14', end_hour='15', day_of_week="mon-fri", num_times_per_day=20)
+    @randomly(start_hour='15', end_hour='16', day_of_week="mon-fri", num_times_per_day=20)
     def walkmaster(self):
         self.say("I'm a random")
 
-    @randomly(
-        start_hour=9,
-        end_hour=16, day_of_week='mon-fri', num_times_per_day=2
-    )
-    def fun_talk(self):
-        req = requests.get(
-            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
-            headers={'User-Agent': 'Mozilla/5.0'},
-        )
-        if req.ok:
-            elem = random.choice(req.json()['data']['children'])
-            url = elem['data']['url']
-            if url.endswith('.gifv'):
-                url = url.replace('.gifv', '.gif')
+    # @randomly(
+    #     start_hour=9,
+    #     end_hour=16, day_of_week='mon-fri', num_times_per_day=2
+    # )
+    # def fun_talk(self):
+    #     req = requests.get(
+    #         'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
+    #         headers={'User-Agent': 'Mozilla/5.0'},
+    #     )
+    #     if req.ok:
+    #         elem = random.choice(req.json()['data']['children'])
+    #         url = elem['data']['url']
+    #         if url.endswith('.gifv'):
+    #             url = url.replace('.gifv', '.gif')
 
-            self.say(url)
-            self.say(elem['data']['title'])
-        else:
-            self.say(req.reason, color='red')
+    #         self.say(url)
+    #         self.say(elem['data']['title'])
+    #     else:
+    #         self.say(req.reason, color='red')
