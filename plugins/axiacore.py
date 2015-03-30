@@ -43,6 +43,10 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not open the door', color='red')
 
+    @randomly(start_hour='14', end_hour='15', day_of_week="mon-fri", num_times_per_day=20)
+    def walkmaster(self):
+        self.say("I'm a random")
+
     @randomly(
         start_hour=9,
         end_hour=16, day_of_week='mon-fri', num_times_per_day=2
