@@ -59,3 +59,20 @@ class AxiaCorePlugin(WillPlugin):
             self.say(elem['data']['title'])
         else:
             self.say(req.reason, color='red')
+
+    @randomly(start_hour='10', end_hour='11', day_of_week="mon-fri", num_times_per_day=40)
+    def lesdotestthis(self):
+        req = requests.get(
+            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
+            headers={'User-Agent': 'Mozilla/5.0'},
+        )
+        if req.ok:
+            elem = random.choice(req.json()['data']['children'])
+            url = elem['data']['url']
+            if url.endswith('.gifv'):
+                url = url.replace('.gifv', '.gif')
+
+            self.say(url)
+            self.say(elem['data']['title'])
+        else:
+            self.say(req.reason, color='red')
