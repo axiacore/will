@@ -43,7 +43,8 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not open the door', color='red')
 
-    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
+#    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
+    @hear('fun')
     def holdmybeer(self):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
