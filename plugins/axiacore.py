@@ -44,8 +44,9 @@ class AxiaCorePlugin(WillPlugin):
             self.reply(message, 'I could not open the door', color='red')
 
 #    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
+#    def holdmybeer(self):
     @hear('fun')
-    def holdmybeer(self):
+    def so_much_fun(self):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
             headers={'User-Agent': 'Mozilla/5.0'},
