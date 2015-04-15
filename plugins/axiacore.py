@@ -35,7 +35,7 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.item img').attr('src'), message=message)
 
     @require_settings('DOOR_URL')
-    @respond_to('op|open the door')
+    @respond_to('^op$|^open the door$')
     def open_the_door(self, message):
         req = requests.get(settings.DOOR_URL)
         if req.ok:
@@ -44,7 +44,7 @@ class AxiaCorePlugin(WillPlugin):
             self.reply(message, 'I could not open the door', color='red')
 
     @require_settings('AUDIO_URL')
-    @respond_to('stop')
+    @respond_to('^stop$')
     def stop_the_beat(self, message):
         # Stop current playback
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
@@ -63,8 +63,8 @@ class AxiaCorePlugin(WillPlugin):
         self.reply(message, 'Silence please!')
 
     @require_settings('AUDIO_URL')
-    @respond_to('play')
-    def play_the_beat(self, message):
+    @respond_to('^play$|^play (?P<url>.*)$')
+    def play_the_beat(self, message, url=None):
         # Stop current playback
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
 
@@ -80,7 +80,12 @@ class AxiaCorePlugin(WillPlugin):
             return
 
         # Add new stream
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["http://www.977music.com/itunes/90s.pls"]}}')
+        if url is None:
+            url = 'http://www.977music.com/itunes/90s.pls'
+        if 'youtube.com' in url:
+            url = 'yt:%s' % url
+
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["%s"]}}' % url)
 
         if not req.ok:
             self.reply(message, 'I could not add the stream', color='red')
