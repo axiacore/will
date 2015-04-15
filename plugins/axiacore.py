@@ -79,12 +79,33 @@ class AxiaCorePlugin(WillPlugin):
             self.reply(message, 'I could not clear the tracklist', color='red')
             return
 
-        # Add new stream
+        # Get a stream to play
         if url is None:
-            url = 'http://www.977music.com/itunes/90s.pls'
+            # Play some radio
+            radio_list = [
+                'http://www.977music.com/itunes/90s.pls',
+                'http://www.977music.com/itunes/mix.pls',
+                'http://www.977music.com/itunes/jazz.pls',
+                'http://www.977music.com/977hicountry.pls',
+                'http://www.977music.com/itunes/alternative.pls',
+                'http://www.977music.com/itunes/oldies.pls',
+                'http://www.977music.com/itunes/80s.pls',
+                'http://www.977music.com/itunes/classicrock.pls',
+                'http://www.977music.com/itunes/hitz.pls',
+                'http://nprdmp.ic.llnwd.net/stream/nprdmp_live01_mp3',
+                'http://icecast.omroep.nl/3fm-bb-mp3',
+                'http://vprbbc.streamguys.net:8000/vprbbc24.mp3',
+                'http://81.173.3.132:8082',
+                'http://somafm.com/groovesalad.pls',
+                'http://stream.kissfm.de/kissfm/mp3-128/internetradio/',
+                'http://pr320.pinguinradio.com/listen.pls',
+            ]
+            url = random.choice(radio_list)
         if 'youtube.com' in url:
+            # If is a youtube link add the prefix
             url = 'yt:%s' % url
 
+        # Add new stream
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["%s"]}}' % url)
 
         if not req.ok:
@@ -97,7 +118,7 @@ class AxiaCorePlugin(WillPlugin):
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
 
         if req.ok:
-            self.reply(message, '%s is now playing for you %s' % (track_name, message.sender.nick.title()))
+            self.reply(message, '%s will be playing for you %s' % (track_name, message.sender.nick.title()))
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
