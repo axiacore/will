@@ -35,13 +35,47 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.item img').attr('src'), message=message)
 
     @require_settings('DOOR_URL')
-    @respond_to('open the door')
+    @respond_to('op|open the door')
     def open_the_door(self, message):
         req = requests.get(settings.DOOR_URL)
         if req.ok:
             self.reply(message, 'Say welcome %s!' % message.sender.nick)
         else:
             self.reply(message, 'I could not open the door', color='red')
+
+    @require_settings('AUDIO_URL')
+    @respond_to('play')
+    def play_the_beat(self, message):
+        # Stop current playback
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
+
+        if not req.ok:
+            self.reply(message, 'I could not stop the playback', color='red')
+            return
+
+        # Clear tracklist
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.clear"}')
+
+        if not req.ok:
+            self.reply(message, 'I could not clear the tracklist', color='red')
+            return
+
+        # Add new stream
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": "http://www.977music.com/itunes/90s.pls", "uris": null}}')
+
+        if not req.ok:
+            self.reply(message, 'I could not add the stream', color='red')
+            return
+
+        track_name = req.json()['result']['track']['name']
+
+        # Play the beat
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
+
+        if req.ok:
+            self.reply(message, '%s I just played %s for you' % (message.sender.nick, track_name))
+        else:
+            self.reply(message, 'I could not play the stream', color='red')
 
 # TODO: wait for https://github.com/skoczen/will/issues/119
 #    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
