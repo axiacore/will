@@ -61,13 +61,13 @@ class AxiaCorePlugin(WillPlugin):
             return
 
         # Add new stream
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": "http://www.977music.com/itunes/90s.pls", "uris": null}}')
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["http://www.977music.com/itunes/90s.pls"]}}')
 
         if not req.ok:
             self.reply(message, 'I could not add the stream', color='red')
             return
 
-        track_name = req.json()['result']['track']['name']
+        track_name = req.json()['result'][0]['track']['name']
 
         # Play the beat
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
