@@ -91,7 +91,7 @@ class AxiaCorePlugin(WillPlugin):
             self.reply(message, 'I could not add the stream', color='red')
             return
 
-        track_name = req.json()['result'][0]['track']['name']
+        track_name = req.json()['result'][0]['track'].get('name', url)
 
         # Play the beat
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
