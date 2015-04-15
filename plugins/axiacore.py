@@ -39,9 +39,28 @@ class AxiaCorePlugin(WillPlugin):
     def open_the_door(self, message):
         req = requests.get(settings.DOOR_URL)
         if req.ok:
-            self.reply(message, 'Say welcome %s!' % message.sender.nick)
+            self.reply(message, 'Say welcome %s!' % message.sender.nick.title())
         else:
             self.reply(message, 'I could not open the door', color='red')
+
+    @require_settings('AUDIO_URL')
+    @respond_to('stop')
+    def stop_the_beat(self, message):
+        # Stop current playback
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
+
+        if not req.ok:
+            self.reply(message, 'I could not stop the playback', color='red')
+            return
+
+        # Clear tracklist
+        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.clear"}')
+
+        if not req.ok:
+            self.reply(message, 'I could not clear the tracklist', color='red')
+            return
+
+        self.reply(message, 'Silence please!')
 
     @require_settings('AUDIO_URL')
     @respond_to('play')
@@ -73,7 +92,7 @@ class AxiaCorePlugin(WillPlugin):
         req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
 
         if req.ok:
-            self.reply(message, '%s I just played %s for you' % (message.sender.nick, track_name))
+            self.reply(message, '%s is now playing for you %s' % (track_name, message.sender.nick.title()))
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
