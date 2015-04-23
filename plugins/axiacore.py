@@ -122,11 +122,8 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
-# TODO: wait for https://github.com/skoczen/will/issues/119
-#    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
-#    def holdmybeer(self):
-    @hear('fun')
-    def so_much_fun(self, message):
+    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
+    def holdmybeer(self):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
             headers={'User-Agent': 'Mozilla/5.0'},
@@ -141,3 +138,4 @@ class AxiaCorePlugin(WillPlugin):
             self.say(elem['data']['title'])
         else:
             self.say(req.reason, color='red')
+
