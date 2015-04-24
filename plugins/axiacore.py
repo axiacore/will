@@ -39,23 +39,31 @@ class AxiaCorePlugin(WillPlugin):
     def open_the_door(self, message):
         req = requests.get(settings.DOOR_URL)
         if req.ok:
-            self.reply(message, 'Say welcome %s!' % message.sender.nick.title())
+            self.reply(
+                message, 'Say welcome %s!' % message.sender.nick.title()
+            )
         else:
             self.reply(message, 'I could not open the door', color='red')
 
     @require_settings('AUDIO_URL')
     @respond_to('^stop$')
     def stop_the_beat(self, message):
-        # Stop current playback
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
+        tmpl = '{"jsonrpc": "2.0", "id": 1, "method": "{0}"}'
 
+        # Stop current playback
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=tmpl.format('core.playback.stop'),
+        )
         if not req.ok:
             self.reply(message, 'I could not stop the playback', color='red')
             return
 
         # Clear tracklist
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.clear"}')
-
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=tmpl.format('core.tracklist.clear'),
+        )
         if not req.ok:
             self.reply(message, 'I could not clear the tracklist', color='red')
             return
@@ -65,16 +73,22 @@ class AxiaCorePlugin(WillPlugin):
     @require_settings('AUDIO_URL')
     @respond_to('^play$|^play (?P<url>.*)$')
     def play_the_beat(self, message, url=None):
-        # Stop current playback
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.stop"}')
+        tmpl = '{"jsonrpc": "2.0", "id": 1, "method": "{0}"}'
 
+        # Stop current playback
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=tmpl.format('core.playback.stop'),
+        )
         if not req.ok:
             self.reply(message, 'I could not stop the playback', color='red')
             return
 
         # Clear tracklist
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.clear"}')
-
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=tmpl.format('core.tracklist.clear'),
+        )
         if not req.ok:
             self.reply(message, 'I could not clear the tracklist', color='red')
             return
@@ -95,18 +109,21 @@ class AxiaCorePlugin(WillPlugin):
                 'http://nprdmp.ic.llnwd.net/stream/nprdmp_live01_mp3',
                 'http://icecast.omroep.nl/3fm-bb-mp3',
                 'http://vprbbc.streamguys.net:8000/vprbbc24.mp3',
-                'http://81.173.3.132:8082',
                 'http://somafm.com/groovesalad.pls',
                 'http://stream.kissfm.de/kissfm/mp3-128/internetradio/',
                 'http://pr320.pinguinradio.com/listen.pls',
             ]
             url = random.choice(radio_list)
+
         if 'youtube.com' in url:
             # If is a youtube link add the prefix
             url = 'yt:%s' % url
 
         # Add new stream
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["%s"]}}' % url)
+        req = requests.post(
+            settings.AUDIO_URL,
+            data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["{0}"]}}'.format(url),
+        )
 
         if not req.ok:
             self.reply(message, 'I could not add the stream', color='red')
@@ -115,15 +132,27 @@ class AxiaCorePlugin(WillPlugin):
         track_name = req.json()['result'][0]['track'].get('name', url)
 
         # Play the beat
-        req = requests.post(settings.AUDIO_URL, data='{"jsonrpc": "2.0", "id": 1, "method": "core.playback.play"}')
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=tmpl.format('core.playback.play'),
+        )
 
         if req.ok:
-            self.reply(message, '%s will be playing for you %s' % (track_name, message.sender.nick.title()))
+            self.reply(
+                message, '%s will be playing for you %s' % (
+                    track_name, message.sender.nick.title()
+                )
+            )
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
-    @randomly(start_hour='9', end_hour='16', day_of_week="mon-fri", num_times_per_day=2)
-    def holdmybeer(self):
+    @randomly(
+        start_hour='9',
+        end_hour='16',
+        day_of_week="mon-fri",
+        num_times_per_day=2,
+    )
+    def hold_my_beer(self):
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
             headers={'User-Agent': 'Mozilla/5.0'},
@@ -138,4 +167,3 @@ class AxiaCorePlugin(WillPlugin):
             self.say(elem['data']['title'])
         else:
             self.say(req.reason, color='red')
-
