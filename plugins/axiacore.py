@@ -26,7 +26,7 @@ class AxiaCorePlugin(WillPlugin):
     def talk_on_pug(self, message):
         req = requests.get('http://pugme.herokuapp.com/random')
         if req.ok:
-            self.say(req.json()['pug'])
+            self.say(req.json()['pug'], message=message)
 
     @hear('deploy')
     def talk_on_deploy(self, message):
@@ -115,9 +115,11 @@ class AxiaCorePlugin(WillPlugin):
             ]
             url = random.choice(radio_list)
 
+        # Add prefix for mopidy backends
         if 'youtube.com' in url:
-            # If is a youtube link add the prefix
             url = 'yt:%s' % url
+        elif 'grooveshark.com' in url:
+            url = 'gs:%s' % url
 
         # Add new stream
         req = requests.post(
