@@ -163,7 +163,7 @@ class AxiaCorePlugin(WillPlugin):
 
         if req.ok:
             self.reply(
-                message, '%s will be playing for you %s' % (
+                message, '"%s" will be playing for you %s' % (
                     track_name, message.sender.nick.title()
                 )
             )
