@@ -1,3 +1,2 @@
 pyquery==1.2.9
-#will==0.8.1
-https://github.com/skoczen/will/archive/master.zip
+will==0.8.2
