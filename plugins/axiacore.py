@@ -80,21 +80,27 @@ class AxiaCorePlugin(WillPlugin):
     @require_settings('AUDIO_URL')
     @respond_to('^play$|^play (?P<url>.*)$')
     def play_the_beat(self, message, url=None):
-        tmpl = '{"jsonrpc": "2.0", "id": 1, "method": "{0}"}'
+        data = {
+            'id': 1,
+            'jsonrpc': '2.0',
+            'method': '',
+        }
 
         # Stop current playback
+        data['method'] = 'core.playback.stop'
         req = requests.post(
             settings.AUDIO_URL,
-            data=tmpl.format('core.playback.stop'),
+            data=json.dumps(data),
         )
         if not req.ok:
             self.reply(message, 'I could not stop the playback', color='red')
             return
 
         # Clear tracklist
+        data['method'] = 'core.tracklist.clear'
         req = requests.post(
             settings.AUDIO_URL,
-            data=tmpl.format('core.tracklist.clear'),
+            data=json.dumps(data),
         )
         if not req.ok:
             self.reply(message, 'I could not clear the tracklist', color='red')
@@ -129,9 +135,16 @@ class AxiaCorePlugin(WillPlugin):
             url = 'gs:%s' % url
 
         # Add new stream
+        data['method'] = 'core.tracklist.add'
+        data['params'] = {
+            'tracks': None,
+            'at_position': None,
+            'uri': None,
+            'uris': [url],
+        }
         req = requests.post(
             settings.AUDIO_URL,
-            data='{"jsonrpc": "2.0", "id": 1, "method": "core.tracklist.add", "params": {"tracks": null, "at_position": null, "uri": null, "uris": ["{0}"]}}'.format(url),
+            data=json.dumps(data),
         )
 
         if not req.ok:
@@ -141,9 +154,11 @@ class AxiaCorePlugin(WillPlugin):
         track_name = req.json()['result'][0]['track'].get('name', url)
 
         # Play the beat
+        del data['params']
+        data['method'] = 'core.playback.play'
         req = requests.post(
             settings.AUDIO_URL,
-            data=tmpl.format('core.playback.play'),
+            data=json.dumps(data),
         )
 
         if req.ok:
