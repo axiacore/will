@@ -1,3 +1,4 @@
+import json
 import random
 import requests
 
@@ -48,21 +49,27 @@ class AxiaCorePlugin(WillPlugin):
     @require_settings('AUDIO_URL')
     @respond_to('^stop$')
     def stop_the_beat(self, message):
-        tmpl = '{"jsonrpc": "2.0", "id": 1, "method": "{0}"}'
+        data = {
+            'id': 1,
+            'jsonrpc': '2.0',
+            'method': '',
+        }
 
         # Stop current playback
+        data['method'] = 'core.playback.stop'
         req = requests.post(
             settings.AUDIO_URL,
-            data=tmpl.format('core.playback.stop'),
+            data=json.dumps(data),
         )
         if not req.ok:
             self.reply(message, 'I could not stop the playback', color='red')
             return
 
         # Clear tracklist
+        data['method'] = 'core.tracklist.clear'
         req = requests.post(
             settings.AUDIO_URL,
-            data=tmpl.format('core.tracklist.clear'),
+            data=json.dumps(data),
         )
         if not req.ok:
             self.reply(message, 'I could not clear the tracklist', color='red')
