@@ -1,6 +1,6 @@
 Current linodes are: <br>
 <ol>
-{% for linode in linode_list %}
-    <li>{{ linode.LABEL }} &rarr; <b>{% if linode.STATUS == -1 %}Being Created{% elif linode.STATUS == 0 %}Brand New{% elif linode.STATUS == 1 %}Running{% elif linode.STATUS == 2 %}Powered Off{% endif %}</b></li>
+{% for label, linode_info in linode_list.items() %}
+    <li>{{ label }} &rarr; <b>{{ linode_info.status }}</b></li>
 {% endfor %}
 </ol>
