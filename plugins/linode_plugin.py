@@ -15,7 +15,7 @@ class LinodePlugin(WillPlugin):
     }
 
     @require_settings('LINODE_API_KEY')
-    @respond_to('^linode(?: (?P<command>\w+))?(?: (?P<machine>\w+))?')
+    @respond_to('^linode(?: (?P<command>\w+))?(?: (?P<machine>[-\w]+))?')
     def linode_command(self, message, command=None, machine=None):
         """
         Get a list of available linodes.
