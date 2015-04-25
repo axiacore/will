@@ -10,11 +10,14 @@ class LinodePlugin(WillPlugin):
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode list$')
     def linode_list(self, message):
+        """
+        Get a list of available linodes.
+        """
         status = {
-            '-1': 'Being Created',
-            '0': 'Brand New',
-            '1': 'Running',
-            '2': 'Powered Off',
+            -1: 'Being Created',
+            0: 'Brand New',
+            1: 'Running',
+            2: 'Powered Off',
         }
         linode_api = api.Api(settings.LINODE_API_KEY)
 
