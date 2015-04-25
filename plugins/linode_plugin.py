@@ -15,7 +15,7 @@ class LinodePlugin(WillPlugin):
     }
 
     @require_settings('LINODE_API_KEY')
-    @respond_to('^linode (?P<command>\w+)(?: (?P<machine>\w+))?')
+    @respond_to('^linode(?: (?P<command>\w+))?(?: (?P<machine>\w+))?')
     def linode_command(self, message, command=None, machine=None):
         """
         Get a list of available linodes.
@@ -25,11 +25,13 @@ class LinodePlugin(WillPlugin):
             'reboot',
         )
         if command not in command_list:
-            self.say(
-                'Give a command like: %s' % ', '.join(command_list),
+            self.reply(
                 message=message,
+                content='Give a command like: %s' % ', '.join(command_list),
                 color='red',
+                notify=True,
             )
+            return
 
         linode_api = api.Api(settings.LINODE_API_KEY)
         linode_list = self.load('linode_list', {})
@@ -42,14 +44,39 @@ class LinodePlugin(WillPlugin):
                 }
             self.save('linode_list', linode_list)
 
-            self.say(rendered_template('linode_list.html', {
-                'linode_list': linode_list,
-            }), message=message, html=True)
+            self.reply(
+                message=message,
+                content=rendered_template('linode_list.html', {
+                    'linode_list': linode_list,
+                }),
+                html=True,
+                notify=True,
+            )
+            return
 
-        elif command == 'reboot':
+        if command == 'reboot':
             if machine not in linode_list:
-                self.say(
-                    '%s does not exist' % machine,
+                self.reply(
                     message=message,
+                    content='Linode %s does not exist' % machine,
                     color='red',
+                    notify=True,
                 )
+                return
+
+            try:
+                linode_api.linode_reboot(LinodeID=linode_list[machine]['id'])
+                self.reply(
+                    message=message,
+                    content='%s is now rebooting' % machine,
+                    notify=True,
+                )
+                return
+            except linode_api.ApiError:
+                self.reply(
+                    message=message,
+                    content='There was an error rebooting %s' % machine,
+                    color='red',
+                    notify=True,
+                )
+                return
