@@ -44,7 +44,7 @@ class LinodePlugin(WillPlugin):
                 }
             self.save('linode_list', linode_list)
 
-            self.reply(
+            self.say(
                 message=message,
                 content=rendered_template('linode_list.html', {
                     'linode_list': linode_list,
