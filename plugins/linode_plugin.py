@@ -37,6 +37,7 @@ class LinodePlugin(WillPlugin):
         linode_list = self.load('linode_list', {})
 
         if command == 'status':
+            linode_list = {}
             for linode in linode_api.linode_list():
                 linode_list[linode['LABEL']] = {
                     'id': linode['LINODEID'],
