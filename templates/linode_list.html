@@ -1,6 +1,6 @@
-Current linodes are: <br>
+Our linodes are: <br>
 <ol>
 {% for label, linode_info in linode_list.items() %}
-    <li>{{ label }} &rarr; <b>{{ linode_info.status }}</b></li>
+    <li><b>{{ linode_info.status }}</b> &rarr; {{ label }}</li>
 {% endfor %}
 </ol>
