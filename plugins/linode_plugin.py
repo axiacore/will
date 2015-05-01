@@ -15,7 +15,8 @@ class LinodePlugin(WillPlugin):
         2: 'Powered Off',
     }
 
-    DOMAIN_REGEX = '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
+    DNS_REGEX = \
+        '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
 
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode(?: (?P<command>[-\w]+))?(?: (?P<arg>[=-\w]+))?')
@@ -27,6 +28,7 @@ class LinodePlugin(WillPlugin):
             'status',
             'reboot',
             'dns-add',
+            'dns-remove',
         )
         if command not in command_list:
             self.reply(
@@ -87,18 +89,18 @@ class LinodePlugin(WillPlugin):
                 return
 
         if command == 'dns-add':
-            regex = re.compile(self.DOMAIN_REGEX)
+            regex = re.compile(self.DNS_REGEX)
             if not bool(regex.match(arg)):
                 self.reply(
                     message=message,
-                    content='The argument must be some.domain.com=ip',
+                    content='The argument must be some.domain.com=ip_address',
                     color='red',
                     notify=True,
                 )
                 return
 
-            domain, ip = arg.split('=')
-            subdomain, domain = domain.split('.', 1)
+            full_domain, ip = arg.split('=')
+            subdomain, domain = full_domain.split('.', 1)
 
             # Get domain ID
             domain_id = None
@@ -110,7 +112,7 @@ class LinodePlugin(WillPlugin):
             if not domain_id:
                 self.reply(
                     message=message,
-                    content='Domain %s does not exist in linode' % domain,
+                    content='Domain %s does not exist' % domain,
                     color='red',
                     notify=True,
                 )
@@ -133,9 +135,96 @@ class LinodePlugin(WillPlugin):
                     )
                     return
 
-            linode_api.domain_resource_create(
+            try:
+                linode_api.domain_resource_create(
+                    DomainID=domain_id,
+                    Type='A',
+                    Name=subdomain,
+                    Target=ip,
+                )
+                self.reply(
+                    message=message,
+                    content='%s will now respond from %s' % (full_domain, ip),
+                    notify=True,
+                )
+                return
+            except linode_api.ApiError:
+                self.reply(
+                    message=message,
+                    content='There was an error setting %s' % full_domain,
+                    color='red',
+                    notify=True,
+                )
+                return
+
+        if command == 'dns-remove':
+            regex = re.compile('^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
+            if not bool(regex.match(arg)):
+                self.reply(
+                    message=message,
+                    content='The argument must be some.domain.com',
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            full_domain, ip = arg.split('=')
+            subdomain, domain = full_domain.split('.', 1)
+
+            # Get domain ID
+            domain_id = None
+            for linode_domain in linode_api.domain_list():
+                if domain == linode_domain['DOMAIN']:
+                    domain_id = linode_domain['DOMAINID']
+                    break
+
+            if not domain_id:
+                self.reply(
+                    message=message,
+                    content='Domain %s does not exist' % domain,
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            # Check if the subdomain already exist
+            resource_id = None
+            subdomain_list = linode_api.domain_resource_list(
                 DomainID=domain_id,
-                Type='A',
-                Name=subdomain,
-                Target=ip,
             )
+            for linode_subdomain in subdomain_list:
+                if (
+                    subdomain == linode_subdomain['NAME']
+                    and linode_subdomain['TYPE'].upper() == 'A'
+                ):
+                    resource_id = linode_subdomain['ResourceID']
+                    break
+
+            if not resource_id:
+                self.reply(
+                    message=message,
+                    content='Subdomain %s does not exist' % subdomain,
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            try:
+                linode_api.domain_resource_delete(
+                    DomainID=domain_id,
+                    ResourceID=resource_id,
+                )
+                self.reply(
+                    message=message,
+                    content='%s was removed' % full_domain,
+                    notify=True,
+                )
+                return
+            except linode_api.ApiError:
+                self.reply(
+                    message=message,
+                    content='There was an error removing %s' % full_domain,
+                    color='red',
+                    notify=True,
+                )
+                return
