@@ -91,7 +91,7 @@ class LinodePlugin(WillPlugin):
             linode_api.linode_reboot(LinodeID=linode_list[label]['id'])
             self.reply(
                 message=message,
-                content='%s is now rebooting' % label,
+                content='%s is now rebooting. Wait a couple minutes.' % label,
                 notify=True,
             )
             return
@@ -280,7 +280,7 @@ class LinodePlugin(WillPlugin):
                 subdomain == linode_subdomain['NAME']
                 and linode_subdomain['TYPE'].upper() == 'A'
             ):
-                resource_id = linode_subdomain['ResourceID']
+                resource_id = linode_subdomain['RESOURCEID']
                 break
 
         if resource_id is None:
