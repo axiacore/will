@@ -1,6 +1,6 @@
 from will import settings
 from will.plugin import WillPlugin
-from will.decorators import respond_to, rendered_template, require_settings
+from will.decorators import respond_to, require_settings
 
 import requests
 
@@ -19,9 +19,10 @@ class BitbucketPlugin(WillPlugin):
         )
 
         team = 'axiacore'
+        bb = 'https://api.bitbucket.org'
         slug = '{0}-{1}'.format(customer.lower(), project.lower())
         name = '{0} - {1}'.format(customer.title(), project.title())
-        url = 'https://api.bitbucket.org/2.0/repositories/{0}/{1}'.format(
+        url = bb + '/2.0/repositories/{0}/{1}'.format(
             team,
             slug,
         )
@@ -50,7 +51,7 @@ class BitbucketPlugin(WillPlugin):
 
         repo_slug = response['slug']
         repo_name = response['name']
-        url = 'https://api.bitbucket.org/2.0/repositories/{0}/{1}/branch-restrictions'.format(
+        url = bb + '/2.0/repositories/{0}/{1}/branch-restrictions'.format(
             team,
             repo_slug,
         )
@@ -71,13 +72,14 @@ class BitbucketPlugin(WillPlugin):
             auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
-        url = 'https://api.bitbucket.org/1.0/repositories/{0}/{1}/deploy-keys'.format(
+        # Add the deployment keys
+        gh = 'https://raw.githubusercontent.com'
+        key_url = gh + '/AxiaCore/public-keys/master/development_keys'
+        url = bb + '/1.0/repositories/{0}/{1}/deploy-keys'.format(
             team,
             repo_slug,
         )
-        key_url = 'https://raw.githubusercontent.com/AxiaCore/public-keys/master/development_keys'
         for key in requests.get(key_url).content.splitlines():
-            # Add the deployment keys
             response = requests.post(
                 url,
                 data={'key': key},
