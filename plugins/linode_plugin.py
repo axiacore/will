@@ -35,8 +35,7 @@ class LinodePlugin(WillPlugin):
         """
         Get a list of available linodes.
 
-        Usage:
-            linode status
+        Usage: linode status
         """
         STATUS = {
             -1: 'Being Created',
@@ -71,8 +70,7 @@ class LinodePlugin(WillPlugin):
         """
         Reboot a linode.
 
-        Usage:
-            linode reboot my-linode-label
+        Usage: linode reboot my-linode-label
         """
         linode_api = api.Api(settings.LINODE_API_KEY)
         linode_list = self.load('linode_list', {})
@@ -98,13 +96,12 @@ class LinodePlugin(WillPlugin):
             )
 
     @require_settings('LINODE_API_KEY')
-    @respond_to('^linode create (?P<label>[-\w]+)$')
+    @respond_to('^linode create (?P<label>[-\w]+)$', admin_only=True)
     def linode_create(self, message, label=None):
         """
         Create a linode.
 
-        Usage:
-            linode create boom
+        Usage: linode create boom
         """
         PLAN = 1            # Linode 1024
         PAYMENT = 1         # Monthly
@@ -182,8 +179,7 @@ class LinodePlugin(WillPlugin):
         """
         Add a DNS record for a domain in linode.
 
-        Usage:
-            linode dns-add my.domain.co 8.8.8.8
+        Usage: linode dns-add my.domain.co 8.8.8.8
         """
         linode_api = api.Api(settings.LINODE_API_KEY)
 
@@ -240,8 +236,7 @@ class LinodePlugin(WillPlugin):
         """
         Remove a DNS record for a domain in linode.
 
-        Usage:
-            linode dns-remove my.domain.co
+        Usage: linode dns-remove my.domain.co
         """
         linode_api = api.Api(settings.LINODE_API_KEY)
 

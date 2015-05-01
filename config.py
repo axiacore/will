@@ -103,7 +103,8 @@ DEFAULT_ROOM = 'AxiaCore'
 
 # User handles who are allowed to perform `admin_only` plugins.  Defaults to everyone.
 ADMINS = [
-    "camilo",
+    'camilo',
+    'igor',
 ]
 
 # Disable SSL checks.  Strongly reccomended this is not set to True.
