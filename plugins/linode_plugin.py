@@ -173,11 +173,16 @@ class LinodePlugin(WillPlugin):
 
         self.reply(
             message=message,
-            content='%s was created with <b>%s</b> and password <b>%s</b>' % (
-                label,
-                ip,
-                password,
-            ),
+            content='%s was created.' % label,
+        )
+
+        self.say(
+            message=message,
+            content=rendered_template('linode_created.html', {
+                'label': label,
+                'ip': ip,
+                'password': password,
+            }),
             html=True,
             notify=True,
         )
