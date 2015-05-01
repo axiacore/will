@@ -18,6 +18,13 @@ class LinodePlugin(WillPlugin):
     DNS_REGEX = \
         '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
 
+    def __return_error(self, message, content):
+        """
+        Returns an error to the user
+        """
+        self.reply(message=message, content=content, color='red', notify=True)
+        return
+
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode(?: (?P<command>[-\w]+))?(?: (?P<arg>[=-\w]+))?')
     def linode_command(self, message, command=None, arg=None):
@@ -31,13 +38,10 @@ class LinodePlugin(WillPlugin):
             'dns-remove',
         )
         if command not in command_list:
-            self.reply(
+            return self.__return_error(
                 message=message,
                 content='Give a command like: %s' % ', '.join(command_list),
-                color='red',
-                notify=True,
             )
-            return
 
         linode_api = api.Api(settings.LINODE_API_KEY)
         linode_list = self.load('linode_list', {})
@@ -63,13 +67,10 @@ class LinodePlugin(WillPlugin):
 
         if command == 'reboot':
             if arg not in linode_list:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='Linode %s does not exist' % arg,
-                    color='red',
-                    notify=True,
                 )
-                return
 
             try:
                 linode_api.linode_reboot(LinodeID=linode_list[arg]['id'])
@@ -80,24 +81,18 @@ class LinodePlugin(WillPlugin):
                 )
                 return
             except linode_api.ApiError:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='There was an error rebooting %s' % arg,
-                    color='red',
-                    notify=True,
                 )
-                return
 
         if command == 'dns-add':
             regex = re.compile(self.DNS_REGEX)
             if not bool(regex.match(arg)):
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='The argument must be some.domain.com=ip_address',
-                    color='red',
-                    notify=True,
                 )
-                return
 
             full_domain, ip = arg.split('=')
             subdomain, domain = full_domain.split('.', 1)
@@ -110,13 +105,10 @@ class LinodePlugin(WillPlugin):
                     break
 
             if not domain_id:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='Domain %s does not exist' % domain,
-                    color='red',
-                    notify=True,
                 )
-                return
 
             # Check if the subdomain already exist
             subdomain_list = linode_api.domain_resource_list(
@@ -127,13 +119,10 @@ class LinodePlugin(WillPlugin):
                     subdomain == linode_subdomain['NAME']
                     and linode_subdomain['TYPE'].upper() == 'A'
                 ):
-                    self.reply(
+                    return self.__return_error(
                         message=message,
                         content='Subdomain %s already exists' % subdomain,
-                        color='red',
-                        notify=True,
                     )
-                    return
 
             try:
                 linode_api.domain_resource_create(
@@ -149,24 +138,18 @@ class LinodePlugin(WillPlugin):
                 )
                 return
             except linode_api.ApiError:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='There was an error setting %s' % full_domain,
-                    color='red',
-                    notify=True,
                 )
-                return
 
         if command == 'dns-remove':
             regex = re.compile('^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
             if not bool(regex.match(arg)):
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='The argument must be some.domain.com',
-                    color='red',
-                    notify=True,
                 )
-                return
 
             full_domain, ip = arg.split('=')
             subdomain, domain = full_domain.split('.', 1)
@@ -179,13 +162,10 @@ class LinodePlugin(WillPlugin):
                     break
 
             if not domain_id:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='Domain %s does not exist' % domain,
-                    color='red',
-                    notify=True,
                 )
-                return
 
             # Check if the subdomain already exist
             resource_id = None
@@ -201,13 +181,10 @@ class LinodePlugin(WillPlugin):
                     break
 
             if not resource_id:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='Subdomain %s does not exist' % subdomain,
-                    color='red',
-                    notify=True,
                 )
-                return
 
             try:
                 linode_api.domain_resource_delete(
@@ -221,10 +198,7 @@ class LinodePlugin(WillPlugin):
                 )
                 return
             except linode_api.ApiError:
-                self.reply(
+                return self.__return_error(
                     message=message,
                     content='There was an error removing %s' % full_domain,
-                    color='red',
-                    notify=True,
                 )
-                return
