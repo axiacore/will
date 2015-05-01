@@ -163,7 +163,7 @@ class LinodePlugin(WillPlugin):
         linode_api.linode_boot(LinodeId=linode_id)
 
         # Get IP
-        ip = linode_api.linode_ip_list(LinodeId=linode_id)[0]['IPADDRESSID']
+        ip = linode_api.linode_ip_list(LinodeId=linode_id)[0]['IPADDRESS']
 
         self.reply(
             message=message,
