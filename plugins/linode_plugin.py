@@ -2,7 +2,6 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, rendered_template, require_settings
 
-import re
 from linode import api
 
 
@@ -87,6 +86,7 @@ class LinodePlugin(WillPlugin):
                 return
 
         if command == 'dns-add':
+            import re
             regex = re.compile(self.DOMAIN_REGEX)
             if not bool(regex.match(arg)):
                 self.reply(
