@@ -2,6 +2,7 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, rendered_template, require_settings
 
+import re
 from linode import api
 
 
@@ -13,6 +14,8 @@ class LinodePlugin(WillPlugin):
         1: 'Running',
         2: 'Powered Off',
     }
+
+    DOMAIN_REGEX = '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
 
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode(?: (?P<command>[-\w]+))?(?: (?P<arg>[=-\w]+))?')
@@ -82,3 +85,57 @@ class LinodePlugin(WillPlugin):
                     notify=True,
                 )
                 return
+
+        if command == 'dns-add':
+            regex = re.compile(self.DOMAIN_REGEX)
+            if not bool(regex.match(arg)):
+                self.reply(
+                    message=message,
+                    content='The argument must be some.domain.com=ip',
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            domain, ip = arg.split('=')
+            subdomain, domain = domain.split('.', 1)
+
+            # Get domain ID
+            domain_id = None
+            for linode_domain in linode_api.domain_list():
+                if domain == linode_domain['DOMAIN']:
+                    domain_id = linode_domain['DOMAINID']
+                    break
+
+            if not domain_id:
+                self.reply(
+                    message=message,
+                    content='Domain %s does not exist in linode' % domain,
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            # Check if the subdomain already exist
+            subdomain_list = linode_api.domain_resource_list(
+                DomainID=domain_id,
+            )
+            for linode_subdomain in subdomain_list:
+                if (
+                    subdomain == linode_subdomain['NAME']
+                    and linode_subdomain['TYPE'].upper() == 'A'
+                ):
+                    self.reply(
+                        message=message,
+                        content='Subdomain %s already exists' % subdomain,
+                        color='red',
+                        notify=True,
+                    )
+                    return
+
+            linode_api.domain_resource_create(
+                DomainID=domain_id,
+                Type='A',
+                Name=subdomain,
+                Target=ip,
+            )
