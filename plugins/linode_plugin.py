@@ -116,6 +116,23 @@ class LinodePlugin(WillPlugin):
                 )
                 return
 
+            # Check if the subdomain already exist
+            subdomain_list = linode_api.domain_resource_list(
+                DomainID=domain_id,
+            )
+            for linode_subdomain in subdomain_list:
+                if (
+                    subdomain == linode_subdomain['NAME']
+                    and linode_subdomain['TYPE'].upper() == 'A'
+                ):
+                    self.reply(
+                        message=message,
+                        content='Subdomain %s already exists' % subdomain,
+                        color='red',
+                        notify=True,
+                    )
+                    return
+
             linode_api.domain_resource_create(
                 DomainID=domain_id,
                 Type='A',
