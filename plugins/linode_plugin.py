@@ -2,6 +2,7 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, rendered_template, require_settings
 
+import re
 from linode import api
 
 
@@ -14,15 +15,18 @@ class LinodePlugin(WillPlugin):
         2: 'Powered Off',
     }
 
+    DOMAIN_REGEX = '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
+
     @require_settings('LINODE_API_KEY')
-    @respond_to('^linode(?: (?P<command>\w+))?(?: (?P<machine>[-\w]+))?')
-    def linode_command(self, message, command=None, machine=None):
+    @respond_to('^linode(?: (?P<command>[-\w]+))?(?: (?P<arg>[=-\w]+))?')
+    def linode_command(self, message, command=None, arg=None):
         """
         Get a list of available linodes.
         """
         command_list = (
             'status',
             'reboot',
+            'dns-add',
         )
         if command not in command_list:
             self.reply(
@@ -56,28 +60,65 @@ class LinodePlugin(WillPlugin):
             return
 
         if command == 'reboot':
-            if machine not in linode_list:
+            if arg not in linode_list:
                 self.reply(
                     message=message,
-                    content='Linode %s does not exist' % machine,
+                    content='Linode %s does not exist' % arg,
                     color='red',
                     notify=True,
                 )
                 return
 
             try:
-                linode_api.linode_reboot(LinodeID=linode_list[machine]['id'])
+                linode_api.linode_reboot(LinodeID=linode_list[arg]['id'])
                 self.reply(
                     message=message,
-                    content='%s is now rebooting' % machine,
+                    content='%s is now rebooting' % arg,
                     notify=True,
                 )
                 return
             except linode_api.ApiError:
                 self.reply(
                     message=message,
-                    content='There was an error rebooting %s' % machine,
+                    content='There was an error rebooting %s' % arg,
                     color='red',
                     notify=True,
                 )
                 return
+
+        if command == 'dns-add':
+            regex = re.compile(self.DOMAIN_REGEX)
+            if not bool(regex.match(arg)):
+                self.reply(
+                    message=message,
+                    content='The argument must be some.domain.com=ip',
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            domain, ip = arg.split('=')
+            subdomain, domain = domain.split('.', 1)
+
+            # Get domain ID
+            domain_id = None
+            for linode_domain in linode_api.domain_list():
+                if domain == linode_domain['DOMAIN']:
+                    domain_id = linode_domain['DOMAINID']
+                    break
+
+            if not domain_id:
+                self.reply(
+                    message=message,
+                    content='Domain %s does not exist in linode' % domain,
+                    color='red',
+                    notify=True,
+                )
+                return
+
+            linode_api.domain_resource_create(
+                DomainID=domain_id,
+                Type='A',
+                Name=subdomain,
+                Target=ip,
+            )
