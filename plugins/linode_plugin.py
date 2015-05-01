@@ -33,10 +33,13 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode status$')
     def linode_status(self, message):
         """
-        Get a list of available linodes.
-
-        Usage: linode status
+        Get a list of available linodes: linode status
         """
+        self.say(
+            message=message,
+            content="I'm getting the linode status. Hang in there tiger...",
+        )
+
         STATUS = {
             -1: 'Being Created',
             0: 'Brand New',
@@ -68,10 +71,13 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode reboot (?P<label>[-\w]+)$')
     def linode_reboot(self, message, label):
         """
-        Reboot a linode.
-
-        Usage: linode reboot my-linode-label
+        Reboot a linode: linode reboot my-linode-label
         """
+        self.say(
+            message=message,
+            content="I'm rebooting a linode. Hang in there bro...",
+        )
+
         linode_api = api.Api(settings.LINODE_API_KEY)
         linode_list = self.load('linode_list', {})
 
@@ -99,10 +105,13 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode create (?P<label>[-\w]+)$', admin_only=True)
     def linode_create(self, message, label=None):
         """
-        Create a linode.
-
-        Usage: linode create boom
+        Create a linode: linode create boom
         """
+        self.say(
+            message=message,
+            content="I'm creating a linode. Hang in there master...",
+        )
+
         PLAN = 1            # Linode 1024
         PAYMENT = 1         # Monthly
         DISTRO = 124        # Ubuntu 14.04 LTS
@@ -177,10 +186,13 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode dns-add (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+) (?P<ip>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$')
     def linode_dns_add(self, message, full_domain, ip):
         """
-        Add a DNS record for a domain in linode.
-
-        Usage: linode dns-add my.domain.co 8.8.8.8
+        Add a DNS record for a domain: linode dns-add my.domain.co 8.8.8.8
         """
+        self.say(
+            message=message,
+            content="I'm adding a DNS record. Hang in there sweetheart...",
+        )
+
         linode_api = api.Api(settings.LINODE_API_KEY)
 
         subdomain, domain = full_domain.split('.', 1)
@@ -234,10 +246,13 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode dns-remove (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
     def linode_dns_remove(self, message, full_domain=None):
         """
-        Remove a DNS record for a domain in linode.
-
-        Usage: linode dns-remove my.domain.co
+        Remove a DNS record for a domain: linode dns-remove my.domain.co
         """
+        self.say(
+            message=message,
+            content="I'm removing a DNS record. Hang in there sunshine...",
+        )
+
         linode_api = api.Api(settings.LINODE_API_KEY)
 
         subdomain, domain = full_domain.split('.', 1)
