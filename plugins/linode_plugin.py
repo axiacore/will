@@ -14,6 +14,21 @@ class LinodePlugin(WillPlugin):
         self.reply(message=message, content=content, color='red', notify=True)
         return
 
+    def __randompass(self):
+        """
+        Generate a long random password that comply to Linode requirements
+        """
+        import random
+        import string
+
+        random.seed()
+        lwr = ''.join(random.choice(string.ascii_lowercase) for x in range(6))
+        upr = ''.join(random.choice(string.ascii_uppercase) for x in range(6))
+        nbr = ''.join(random.choice(string.digits) for x in range(6))
+        punct = ''.join(random.choice(string.punctuation) for x in range(6))
+        p = lwr + upr + nbr + punct
+        return ''.join(random.sample(p, len(p)))
+
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode status$')
     def linode_status(self, message):
@@ -83,6 +98,85 @@ class LinodePlugin(WillPlugin):
             )
 
     @require_settings('LINODE_API_KEY')
+    @respond_to('^linode create (?P<label>[-\w]+)$')
+    def linode_create(self, message, label=None):
+        """
+        Create a linode.
+
+        Usage:
+            linode create boom
+        """
+        PLAN = 1            # Linode 1024
+        PAYMENT = 1         # Monthly
+        DISTRO = 124        # Ubuntu 14.04 LTS
+        KERNEL = 138        # Latest 64 bit (3.19.1-x86_64-linode53)
+        DATACENTER = 6      # Newark, NJ, USA
+        DATA_SIZE = 8192    # 8 GB
+        SWAP_SIZE = 512     # 512 MB
+
+        linode_api = api.Api(settings.LINODE_API_KEY)
+
+        # Create linode
+        response = linode_api.linode_create(
+            DatacenterID=DATACENTER,
+            PlanID=PLAN,
+            PaymentTerm=PAYMENT,
+        )
+        linode_id = response['LinodeID']
+
+        # Set the label
+        linode_api.linode_update(
+            LinodeId=linode_id,
+            Label=label,
+        )
+
+        # Create distribution
+        password = self.__randompass()
+        response = linode_api.linode_disk_createfromdistribution(
+              LinodeId=linode_id,
+              DistributionID=DISTRO,
+              Label='Ubuntu 14.04 LTS Disk',
+              Size=DATA_SIZE,
+              rootPass=password,
+        )
+        disk_list = []
+        disk_list.append(response['DiskID'])
+
+        # Create swap disk
+        response = linode_api.linode_disk_create(
+            LinodeId=linode_id,
+            Type='swap',
+            Label='Swap Disk',
+            Size=SWAP_SIZE,
+        )
+        disk_list.append(response['DiskID'])
+
+        # Create config
+        linode_api.linode_config_create(
+            LinodeId=linode_id,
+            KernelId=KERNEL,
+            Label='Ubuntu 14.04 LTS Profile',
+            Disklist=disk_list,
+        )
+
+        # Boot
+        linode_api.linode_boot(LinodeId=linode_id)
+
+        # Get IP
+        ip = linode_api.linode_ip_list(LinodeId=linode_id)[0]['IPADDRESSID']
+
+        self.reply(
+            message=message,
+            content='%s was created with <b>%s</b> and password <b>%s</b>' % (
+                label,
+                ip,
+                password,
+            ),
+            html=True,
+            notify=True,
+        )
+
+    @require_settings('LINODE_API_KEY')
     @respond_to('^linode dns-add (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+) (?P<ip>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$')
     def linode_dns_add(self, message, full_domain, ip):
         """
@@ -142,7 +236,7 @@ class LinodePlugin(WillPlugin):
 
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode dns-remove (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
-    def linode_dn_remove(self, message, full_domain=None):
+    def linode_dns_remove(self, message, full_domain=None):
         """
         Remove a DNS record for a domain in linode.
 

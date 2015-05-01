@@ -56,7 +56,7 @@ PLUGINS = [
     "will.plugins.productivity",
     "will.plugins.web",
 
-    # "plugins",
+    "plugins",
 ]
 
 # Don't load any of the plugins in this list.  Same options as above.
