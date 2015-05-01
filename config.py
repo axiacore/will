@@ -85,7 +85,7 @@ PLUGIN_BLACKLIST = [
 # ------------------------------------------------------------------------------------
 
 # The list of rooms will should join.  Default is all rooms.
-# ROOMS = ['Testing, Will Kahuna',]
+ROOMS = ['AxiaCore',]
 
 
 # The room will will talk to if the trigger is a webhook and he isn't told a specific room.
