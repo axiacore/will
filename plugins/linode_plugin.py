@@ -14,8 +14,6 @@ class LinodePlugin(WillPlugin):
         2: 'Powered Off',
     }
 
-    DOMAIN_REGEX = '^([a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)=(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$'
-
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode(?: (?P<command>[-\w]+))?(?: (?P<arg>[=-\w]+))?')
     def linode_command(self, message, command=None, arg=None):
@@ -84,4 +82,3 @@ class LinodePlugin(WillPlugin):
                     notify=True,
                 )
                 return
-
