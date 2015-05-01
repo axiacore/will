@@ -142,7 +142,7 @@ class LinodePlugin(WillPlugin):
 
     @require_settings('LINODE_API_KEY')
     @respond_to('^linode dns-remove (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
-    def linode_command(self, message, full_domain=None):
+    def linode_dn_remove(self, message, full_domain=None):
         """
         Remove a DNS record for a domain in linode.
 
