@@ -9,7 +9,7 @@ class BitbucketPlugin(WillPlugin):
 
     @require_settings('BITBUCKET_USER', 'BITBUCKET_PASS')
     @respond_to('^create repo (?P<customer>[\w]+) (?P<project>[\w]+)$')
-    def linode_status(self, message, customer, project):
+    def create_repository(self, message, customer, project):
         """
         Create a new repository: create repo Google Billing
         """
@@ -49,6 +49,7 @@ class BitbucketPlugin(WillPlugin):
             return
 
         repo_slug = response['slug']
+        repo_name = response['name']
         url = 'https://api.bitbucket.org/2.0/repositories/{0}/{1}/branch-restrictions'.format(
             team,
             repo_slug,
@@ -86,7 +87,7 @@ class BitbucketPlugin(WillPlugin):
         self.reply(
             message=message,
             content='{0} repository was just created for you.'.format(
-                response['name'],
+                repo_name,
             )
         )
         self.say(
