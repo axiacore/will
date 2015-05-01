@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+# Author: AxiaCore S.A.S. http://axiacore.com
 from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, rendered_template, require_settings

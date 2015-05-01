@@ -1,10 +1,13 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+# Author: AxiaCore S.A.S. http://axiacore.com
 import json
 import random
 import requests
 
 from will import settings
 from will.plugin import WillPlugin
-from will.decorators import respond_to, periodic, hear, randomly, route, rendered_template, require_settings
+from will.decorators import respond_to, hear, randomly, require_settings
 
 from pyquery import PyQuery as pq
 
