@@ -5,6 +5,7 @@ from will import settings
 from will.plugin import WillPlugin
 from will.decorators import respond_to, require_settings
 
+import json
 import requests
 
 
@@ -59,19 +60,43 @@ class BitbucketPlugin(WillPlugin):
             repo_slug,
         )
 
-        # TODO: needs the push permission set to admins
-
-        # Prevent deletion of the master branch
+        # Only allow administrators to push to master branch
+        data = {
+            'groups': [{
+                'owner': {'username': 'axiacore'},
+                'slug': 'administrators',
+            }],
+            'kind': 'push',
+            'pattern': 'master',
+        }
         response = requests.post(
             url,
-            data={'kind': 'delete', 'pattern': 'master'},
+            data=json.dumps(data),
+            headers={'Content-Type': 'application/json'},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
+        )
+
+        # Prevent deletion of the master branch
+        data = {
+            'kind': 'delete',
+            'pattern': 'master',
+        }
+        response = requests.post(
+            url,
+            data=json.dumps(data),
+            headers={'Content-Type': 'application/json'},
             auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
         # Prevent force rewrite of the master branch
+        data = {
+            'kind': 'force',
+            'pattern': 'master',
+        }
         response = requests.post(
             url,
-            data={'kind': 'force', 'pattern': 'master'},
+            data=json.dumps(data),
+            headers={'Content-Type': 'application/json'},
             auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
