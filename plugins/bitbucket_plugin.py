@@ -25,7 +25,7 @@ class BitbucketPlugin(WillPlugin):
         bb = 'https://api.bitbucket.org'
         slug = '{0}-{1}'.format(customer.lower(), project.lower())
         name = '{0} - {1}'.format(customer.title(), project.title())
-        url = bb + '/2.0/repositories/{0}/{1}'.format(
+        url = bb + '/2.0/repositories/{0}/{1}/'.format(
             team,
             slug,
         )
@@ -54,7 +54,7 @@ class BitbucketPlugin(WillPlugin):
 
         repo_slug = response['slug']
         repo_name = response['name']
-        url = bb + '/2.0/repositories/{0}/{1}/branch-restrictions'.format(
+        url = bb + '/2.0/repositories/{0}/{1}/branch-restrictions/'.format(
             team,
             repo_slug,
         )
@@ -78,7 +78,7 @@ class BitbucketPlugin(WillPlugin):
         # Add the deployment keys
         gh = 'https://raw.githubusercontent.com'
         key_url = gh + '/AxiaCore/public-keys/master/development_keys'
-        url = bb + '/1.0/repositories/{0}/{1}/deploy-keys'.format(
+        url = bb + '/1.0/repositories/{0}/{1}/deploy-keys/'.format(
             team,
             repo_slug,
         )
@@ -95,7 +95,7 @@ class BitbucketPlugin(WillPlugin):
             team,
             repo_slug,
         )
-        url = bb + '/1.0/repositories/{0}/{1}/services'.format(
+        url = bb + '/1.0/repositories/{0}/{1}/services/'.format(
             team,
             repo_slug,
         )
@@ -103,7 +103,7 @@ class BitbucketPlugin(WillPlugin):
             url,
             data={
                 'type': 'POST',
-                'fields': [{'name': 'URL', 'value': jk_url}],
+                'URL': jk_url,
             },
             auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
