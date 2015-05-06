@@ -89,6 +89,25 @@ class BitbucketPlugin(WillPlugin):
                 auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
             )
 
+        # Add the jenkins hook
+        jk = 'http://jenkins.axiacode.com/git/notifyCommit?url='
+        jk_url = jk + 'bitbucket.org:{0}/{1}.git'.format(
+            team,
+            repo_slug,
+        )
+        url = bb + '/1.0/repositories/{0}/{1}/services'.format(
+            team,
+            repo_slug,
+        )
+        response = requests.post(
+            url,
+            data={
+                'type': 'POST',
+                'fields': [{'name': 'URL', 'value': jk_url}],
+            },
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
+        )
+
         self.reply(
             message=message,
             content='{0} repository was just created for you.'.format(
