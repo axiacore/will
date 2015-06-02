@@ -19,17 +19,16 @@ class LinodePlugin(WillPlugin):
 
     def __randompass(self):
         """
-        Generate a long random password that comply to Linode requirements
+        Generate a random password that comply to Linode requirements
         """
         import random
         import string
 
         random.seed()
-        lwr = ''.join(random.choice(string.ascii_lowercase) for x in range(6))
-        upr = ''.join(random.choice(string.ascii_uppercase) for x in range(6))
-        nbr = ''.join(random.choice(string.digits) for x in range(6))
-        punct = ''.join(random.choice(string.punctuation) for x in range(6))
-        p = lwr + upr + nbr + punct
+        lwr = ''.join(random.choice(string.ascii_lowercase) for x in range(4))
+        upr = ''.join(random.choice(string.ascii_uppercase) for x in range(4))
+        nbr = ''.join(random.choice(string.digits) for x in range(4))
+        p = lwr + upr + nbr
         return ''.join(random.sample(p, len(p)))
 
     @require_settings('LINODE_API_KEY')
