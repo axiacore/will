@@ -65,6 +65,7 @@ PLUGIN_BLACKLIST = [
     "will.plugins.productivity.hangout",
     "will.plugins.productivity.world_time",
     "will.plugins.productivity.bitly",
+    "will.plugins.devops.pagerduty",
 ]
 
 
@@ -102,11 +103,9 @@ DEFAULT_ROOM = 'AxiaCore'
 # ]
 
 
-# User handles who are allowed to perform `admin_only` plugins.  Defaults to everyone.
-ADMINS = [
-    'camilo',
-    'igor',
-]
+ACL = {
+    "admins": ["camilo", "igor"]
+}
 
 # Disable SSL checks.  Strongly reccomended this is not set to True.
 # ALLOW_INSECURE_HIPCHAT_SERVER = False
