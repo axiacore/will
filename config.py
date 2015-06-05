@@ -102,7 +102,6 @@ DEFAULT_ROOM = 'AxiaCore'
 #   os.path.abspath("other_folder/templates")
 # ]
 
-
 ACL = {
     "admins": ["camilo", "igor"]
 }
