@@ -51,6 +51,7 @@ PLUGINS = [
     "will.plugins.admin",
     # "will.plugins.chat_room",
     # "will.plugins.devops",
+    "will.plugins.fun",
     "will.plugins.friendly",
     "will.plugins.help",
     "will.plugins.productivity",

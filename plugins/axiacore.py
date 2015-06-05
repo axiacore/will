@@ -26,11 +26,20 @@ class AxiaCorePlugin(WillPlugin):
             message=message,
         )
 
-    @hear('pug')
-    def talk_on_pug(self, message):
-        req = requests.get('http://pugme.herokuapp.com/random')
-        if req.ok:
-            self.say(req.json()['pug'], message=message)
+    @hear('culpa')
+    def talk_on_petro(self, message):
+        base_url = 'https://s3.amazonaws.com/uploads.hipchat.com/50553/341552/'
+        petro_list = (
+            'MucOQkTfZh19ExH/petro-1.jpg',
+            'O0fYobd2noZDzqW/petro-2.jpg',
+            'zG31qjiNMAAATPy/petro-3.jpg',
+            'CeggogfkfI3uKSb/petro-4.jpeg',
+            'jA7DdXUwjMzctwx/petro-5.jpg',
+            'Fr6tAtcKvdtjwJ5/petro-6.jpeg',
+            'DquhpnqGVomkVLu/petro-7.jpg',
+        )
+        self.say('La culpa siempre es de petro', message=message)
+        self.say(base_url + random.choice(petro_list), message=message)
 
     @hear('deploy')
     def talk_on_deploy(self, message):
