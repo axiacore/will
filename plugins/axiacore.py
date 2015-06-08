@@ -70,6 +70,19 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not open the door', color='red')
 
+    @require_settings('SAY_URL')
+    @respond_to('^(say|diga)$')
+    def say(self, message):
+        """
+        Say some text at the office: say hello or diga hola
+        """
+        req = requests.get(settings.SAY_URL, {
+            'lang': 'es',
+            'text': 'hola como estas',
+        })
+        if not req.ok:
+            self.reply(message, 'I could not say it', color='red')
+
     @require_settings('AUDIO_URL')
     @respond_to('^stop$')
     def stop_the_beat(self, message):
