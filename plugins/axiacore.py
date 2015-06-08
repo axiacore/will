@@ -16,10 +16,13 @@ class AxiaCorePlugin(WillPlugin):
 
     @hear('commit')
     def talk_on_commit(self, message):
+        """
+        Show a cool commit message: commit
+        """
         doc = pq(url='http://whatthecommit.com/')
         text = doc('#content p:first').text()
         self.say(
-            '@{0} try this commit message: {1}'.format(
+            '@{0} want to commit? try this message: {1}'.format(
                 message.sender.nick,
                 text,
             ),
@@ -28,6 +31,9 @@ class AxiaCorePlugin(WillPlugin):
 
     @hear('culpa')
     def talk_on_petro(self, message):
+        """
+        Find someone to blame: culpa
+        """
         base_url = 'https://s3.amazonaws.com/uploads.hipchat.com/50553/341552/'
         petro_list = (
             'MucOQkTfZh19ExH/petro-1.jpg',
@@ -43,13 +49,19 @@ class AxiaCorePlugin(WillPlugin):
 
     @hear('deploy')
     def talk_on_deploy(self, message):
+        """
+        Show what happens when deploy: deploy
+        """
         doc = pq(url='http://devopsreactions.tumblr.com/random')
         self.say(doc('.post_title').text(), message=message)
         self.say(doc('.item img').attr('src'), message=message)
 
     @require_settings('DOOR_URL')
-    @respond_to('^op$|^open the door$')
+    @respond_to('^(op|open|abra)$')
     def open_the_door(self, message):
+        """
+        Open the door at the office: op or open or abra
+        """
         req = requests.get(settings.DOOR_URL)
         if req.ok:
             self.reply(
@@ -61,6 +73,9 @@ class AxiaCorePlugin(WillPlugin):
     @require_settings('AUDIO_URL')
     @respond_to('^stop$')
     def stop_the_beat(self, message):
+        """
+        Stop the music at the office: stop
+        """
         data = {
             'id': 1,
             'jsonrpc': '2.0',
@@ -92,6 +107,9 @@ class AxiaCorePlugin(WillPlugin):
     @require_settings('AUDIO_URL')
     @respond_to('^play$|^play (?P<url>.*)$')
     def play_the_beat(self, message, url=None):
+        """
+        Play music at the office: play or play URL
+        """
         data = {
             'id': 1,
             'jsonrpc': '2.0',
@@ -182,6 +200,7 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
+    @hear('fun')
     @randomly(
         start_hour='9',
         end_hour='16',
@@ -189,17 +208,16 @@ class AxiaCorePlugin(WillPlugin):
         num_times_per_day=2,
     )
     def hold_my_beer(self):
+        """
+        Randomly shows something funny: fun
+        """
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
             headers={'User-Agent': 'Mozilla/5.0'},
         )
         if req.ok:
             elem = random.choice(req.json()['data']['children'])
-            url = elem['data']['url']
-            if url.endswith('.gifv'):
-                url = url.replace('.gifv', '.gif')
-
-            self.say(url)
             self.say(elem['data']['title'])
+            self.say(elem['data']['url'])
         else:
             self.say(req.reason, color='red')
