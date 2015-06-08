@@ -56,7 +56,7 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.post_title').text(), message=message)
         self.say(doc('.item img').attr('src'), message=message)
 
-    @require_settings('DOOR_URL')
+    @require_settings('DOOR_URL', 'SAY_URL')
     @respond_to('^(op|open|abra)$')
     def open_the_door(self, message):
         """
@@ -64,6 +64,10 @@ class AxiaCorePlugin(WillPlugin):
         """
         req = requests.get(settings.DOOR_URL)
         if req.ok:
+            req = requests.get(settings.SAY_URL, params={
+                'lang': 'es',
+                'text': 'Bienvenido',
+            })
             self.reply(
                 message, 'Say welcome %s!' % message.sender.nick.title()
             )
@@ -71,14 +75,27 @@ class AxiaCorePlugin(WillPlugin):
             self.reply(message, 'I could not open the door', color='red')
 
     @require_settings('SAY_URL')
-    @respond_to('^(say|diga)$')
-    def say(self, message):
+    @respond_to('^say (?P<text>.*)$')
+    def say_english(self, message, text):
         """
-        Say some text at the office: say hello or diga hola
+        Say a text at the office: say hello
         """
-        req = requests.get(settings.SAY_URL, {
+        req = requests.get(settings.SAY_URL, params={
+            'lang': 'en',
+            'text': text,
+        })
+        if not req.ok:
+            self.reply(message, 'I could not say it', color='red')
+
+    @require_settings('SAY_URL')
+    @respond_to('^diga (?P<text>.*)$')
+    def say_spanish(self, message, text):
+        """
+        Say a text at the office: diga hola
+        """
+        req = requests.get(settings.SAY_URL, params={
             'lang': 'es',
-            'text': 'hola como estas',
+            'text': text,
         })
         if not req.ok:
             self.reply(message, 'I could not say it', color='red')
