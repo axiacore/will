@@ -7,7 +7,11 @@ import requests
 
 from will import settings
 from will.plugin import WillPlugin
-from will.decorators import respond_to, hear, randomly, require_settings
+from will.decorators import hear
+from will.decorators import respond_to
+from will.decorators import randomly
+from will.decorators import require_settings
+from will.decorators import periodic
 
 from pyquery import PyQuery as pq
 
@@ -100,39 +104,68 @@ class AxiaCorePlugin(WillPlugin):
         if not req.ok:
             self.reply(message, 'I could not say it', color='red')
 
+    @require_settings('SAY_URL')
+    @periodic(hour='7', minute='0', day_of_week='mon-fri')
+    def say_good_morning(self):
+        requests.get(settings.SAY_URL, params={
+            'lang': 'es',
+            'text': 'Mompa les desea un feliz día. Los amo a todos.',
+        })
+
+    def __stop_playback(self):
+        """
+        Stop current playback.
+        """
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=json.dumps({
+                'id': 1,
+                'jsonrpc': '2.0',
+                'method': 'core.playback.stop',
+            }),
+        )
+
+        return req.ok
+
+    def __clear_tracklist(self):
+        """
+        Clear tracklist.
+        """
+        req = requests.post(
+            settings.AUDIO_URL,
+            data=json.dumps({
+                'id': 1,
+                'jsonrpc': '2.0',
+                'method': 'core.tracklist.clear',
+            }),
+        )
+
+        return req.ok
+
     @require_settings('AUDIO_URL')
     @respond_to('^stop$')
     def stop_the_beat(self, message):
         """
         Stop the music at the office: stop
         """
-        data = {
-            'id': 1,
-            'jsonrpc': '2.0',
-            'method': '',
-        }
-
-        # Stop current playback
-        data['method'] = 'core.playback.stop'
-        req = requests.post(
-            settings.AUDIO_URL,
-            data=json.dumps(data),
-        )
-        if not req.ok:
+        success = self.__stop_playback()
+        if not success:
             self.reply(message, 'I could not stop the playback', color='red')
             return
 
-        # Clear tracklist
-        data['method'] = 'core.tracklist.clear'
-        req = requests.post(
-            settings.AUDIO_URL,
-            data=json.dumps(data),
-        )
-        if not req.ok:
+        success = self.__clear_tracklist()
+        if not success:
             self.reply(message, 'I could not clear the tracklist', color='red')
             return
 
         self.reply(message, 'Silence please!')
+
+    @require_settings('AUDIO_URL')
+    @periodic(hour='17', minute='0', day_of_week='mon-fri')
+    def stop_on_schedule(self):
+        self.__stop_playback()
+        self.__clear_tracklist()
+        self.say('I just make sure it will be silent at night')
 
     @require_settings('AUDIO_URL')
     @respond_to('^play$|^play (?P<url>.*)$')
@@ -191,8 +224,6 @@ class AxiaCorePlugin(WillPlugin):
         # Add prefix for mopidy backends
         if 'youtube.com' in url:
             url = 'yt:%s' % url
-        elif 'grooveshark.com' in url:
-            url = 'gs:%s' % url
 
         # Add new stream
         data['method'] = 'core.tracklist.add'
@@ -232,9 +263,9 @@ class AxiaCorePlugin(WillPlugin):
 
     @hear('fun')
     @randomly(
-        start_hour='9',
-        end_hour='16',
-        day_of_week="mon-fri",
+        start_hour='7',
+        end_hour='17',
+        day_of_week='mon-fri',
         num_times_per_day=2,
     )
     def hold_my_beer(self):
