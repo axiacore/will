@@ -261,7 +261,22 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
-    @hear('fun')
+    @respond_to('^fun$')
+    def something_fun(self, message):
+        """
+        Return something funny: fun
+        """
+        req = requests.get(
+            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=day',
+            headers={'User-Agent': 'Mozilla/5.0'},
+        )
+        if req.ok:
+            elem = random.choice(req.json()['data']['children'])
+            self.reply(message, elem['data']['title'])
+            self.reply(message, elem['data']['url'])
+        else:
+            self.reply(message, req.reason, color='red')
+
     @randomly(
         start_hour='7',
         end_hour='17',
@@ -270,10 +285,10 @@ class AxiaCorePlugin(WillPlugin):
     )
     def hold_my_beer(self):
         """
-        Randomly shows something funny: fun
+        Randomly shows something funny
         """
         req = requests.get(
-            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=week',
+            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=day',
             headers={'User-Agent': 'Mozilla/5.0'},
         )
         if req.ok:
