@@ -218,6 +218,9 @@ class AxiaCorePlugin(WillPlugin):
                 'http://somafm.com/groovesalad.pls',
                 'http://stream.kissfm.de/kissfm/mp3-128/internetradio/',
                 'http://pr320.pinguinradio.com/listen.pls',
+                'http://i50.letio.com/7000.aac',
+                'http://94.23.184.165:8012/live',
+                'http://superclasica.sytes.net:9798',
             ]
             url = random.choice(radio_list)
 
