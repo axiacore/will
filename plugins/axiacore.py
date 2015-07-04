@@ -109,7 +109,7 @@ class AxiaCorePlugin(WillPlugin):
     def say_good_morning(self):
         requests.get(settings.SAY_URL, params={
             'lang': 'es',
-            'text': 'Mompa les desea un feliz día. Los amo a todos.',
+            'text': 'Mompa les desea un feliz dia. Los amo a todos.',
         })
 
     def __stop_playback(self):
