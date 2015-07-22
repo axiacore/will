@@ -61,8 +61,8 @@ class AxiaCorePlugin(WillPlugin):
         self.say(doc('.item img').attr('src'), message=message)
 
     @require_settings('DOOR_URL', 'SAY_URL')
-    @respond_to('^(op|open|abra)$')
-    def open_the_door(self, message):
+    @respond_to('^(op|open|abra)( (?P<text>.*))?$')
+    def open_the_door(self, message, text):
         """
         Open the door at the office: op or open or abra
         """
@@ -70,7 +70,7 @@ class AxiaCorePlugin(WillPlugin):
         if req.ok:
             req = requests.get(settings.SAY_URL, params={
                 'lang': 'es',
-                'text': 'Bienvenido',
+                'text': text,
             })
             self.reply(
                 message, 'Say welcome %s!' % message.sender.nick.title()
