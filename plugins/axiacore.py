@@ -69,7 +69,7 @@ class AxiaCorePlugin(WillPlugin):
         req = requests.get(settings.DOOR_URL)
         if req.ok:
             req = requests.get(settings.SAY_URL, params={
-                'lang': 'es',
+                'lang': 'es-es',
                 'text': text,
             })
             self.reply(
@@ -85,7 +85,7 @@ class AxiaCorePlugin(WillPlugin):
         Say a text at the office: say hello
         """
         req = requests.get(settings.SAY_URL, params={
-            'lang': 'en',
+            'lang': 'en-us',
             'text': text,
         })
         if not req.ok:
@@ -98,7 +98,7 @@ class AxiaCorePlugin(WillPlugin):
         Say a text at the office: diga hola
         """
         req = requests.get(settings.SAY_URL, params={
-            'lang': 'es',
+            'lang': 'es-es',
             'text': text,
         })
         if not req.ok:
@@ -108,7 +108,7 @@ class AxiaCorePlugin(WillPlugin):
     @periodic(hour='7', minute='0', day_of_week='mon-fri')
     def say_good_morning(self):
         requests.get(settings.SAY_URL, params={
-            'lang': 'es',
+            'lang': 'es-es',
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
