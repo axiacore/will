@@ -115,7 +115,7 @@ class BitbucketPlugin(WillPlugin):
             )
 
         # Add the jenkins hook
-        jk = 'http://jenkins.axiacode.com/git/notifyCommit?url='
+        jk = 'https://jenkins.axiacode.com/git/notifyCommit?url='
         jk_url = jk + 'bitbucket.org:{0}/{1}.git'.format(
             team,
             repo_slug,
