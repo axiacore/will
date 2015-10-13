@@ -12,6 +12,7 @@ from will.decorators import respond_to
 from will.decorators import randomly
 from will.decorators import require_settings
 from will.decorators import periodic
+from will.decorators import rendered_template
 
 from pyquery import PyQuery as pq
 
@@ -113,34 +114,42 @@ class AxiaCorePlugin(WillPlugin):
         })
 
     @periodic(hour='11', minute='35', day_of_week='mon-fri')
-    def show_launch_menu(self):
+    def show_lunch_menu(self):
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
             'text': u'Es hora de pedir el almuerzo',
         })
         if not req.ok:
-            return self.reply(message, 'I could not say it', color='red')
+            return self.say('I could not say it', color='red')
 
         req = requests.get(
             'http://domicilios.com/establecimientos/producto/233735/8829.json',
             headers={'User-Agent': 'Mozilla/5.0'},
         )
 
-        # Print menu
-        self.say(u'Menú del día', color='green')
+        # Build menu dictionary.
+        data = {}
         letters = 'ABCDEFGHI'
         for index, group in enumerate(req.json()['grupoextras']):
-            self.say(group['nombre'])
-
+            choices = []
             for number, option in enumerate(group['extras']):
-                self.say(
+                choices.append(
                     u'{0}{1}: {2}'.format(
                         letters[index],
                         number,
                         option['nombre']
                     )
                 )
-            self.say('----------')
+            data[u'{0}'.format(group['nombre'])] = data
+
+        # Print menu.
+        self.say(
+            content=rendered_template('lunch_menu.html', {
+                'data': data,
+            }),
+            html=True,
+            notify=True,
+        )
 
     def __stop_playback(self):
         """
