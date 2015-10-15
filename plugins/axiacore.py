@@ -113,8 +113,7 @@ class AxiaCorePlugin(WillPlugin):
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
-   	@hear('menu')
-	def print_lunch_menu(self):
+   	def print_lunch_menu(self):
 		req = requests.get(
 			'http://domicilios.com/establecimientos/producto/233735/8829.json',
 			headers={'User-Agent': 'Mozilla/5.0'},
@@ -143,6 +142,10 @@ class AxiaCorePlugin(WillPlugin):
 			html=True,
 			notify=True,
 		)
+
+	@hear('menu')
+	def listen_for_menu(self, message):
+		self.print_lunch_menu()
 
 	@periodic(hour='11', minute='35', day_of_week='mon-fri')
 	def announce_lunch_time(self):
