@@ -132,7 +132,7 @@ class AxiaCorePlugin(WillPlugin):
                         option['nombre']
                     )
                 )
-            data[u'{0}'.format(group['nombre'])] = data
+            data[u'{0}'.format(group['nombre'])] = choices
 
         # Print menu.
         self.say(
