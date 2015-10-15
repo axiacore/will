@@ -113,51 +113,51 @@ class AxiaCorePlugin(WillPlugin):
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
-   	def print_lunch_menu(self):
-		req = requests.get(
-			'http://domicilios.com/establecimientos/producto/233735/8829.json',
-			headers={'User-Agent': 'Mozilla/5.0'},
-		)
+    def print_lunch_menu(self):
+        req = requests.get(
+            'http://domicilios.com/establecimientos/producto/233735/8829.json',
+            headers={'User-Agent': 'Mozilla/5.0'},
+        )
 
-		# Build menu dictionary.
-		data = {}
-		letters = 'ABCDEFGHI'
-		for index, group in enumerate(req.json()['grupoextras']):
-			choices = []
-			for number, option in enumerate(group['extras']):
-				choices.append(
-					u'{0}{1}: {2}'.format(
-						letters[index],
-						number,
-						option['nombre']
-					)
-				)
-			data[u'{0}'.format(group['nombre'])] = data
+        # Build menu dictionary.
+        data = {}
+        letters = 'ABCDEFGHI'
+        for index, group in enumerate(req.json()['grupoextras']):
+            choices = []
+            for number, option in enumerate(group['extras']):
+                choices.append(
+                    u'{0}{1}: {2}'.format(
+                        letters[index],
+                        number,
+                        option['nombre']
+                    )
+                )
+            data[u'{0}'.format(group['nombre'])] = data
 
-		# Print menu.
-		self.say(
-			content=rendered_template('lunch_menu.html', {
-				'data': data,
-			}),
-			html=True,
-			notify=True,
-		)
+        # Print menu.
+        self.say(
+            content=rendered_template('lunch_menu.html', {
+                'data': data,
+            }),
+            html=True,
+            notify=True,
+        )
 
-	@hear('menu')
-	def listen_for_menu(self, message):
-		self.print_lunch_menu()
+    @hear('menu')
+    def listen_for_menu(self, message):
+        self.print_lunch_menu()
 
-	@periodic(hour='11', minute='35', day_of_week='mon-fri')
-	def announce_lunch_time(self):
-		req = requests.get(settings.SAY_URL, params={
-			'lang': 'es-es',
-			'text': u'Es hora de pedir el almuerzo',
-		})
-		if not req.ok:
-			return self.say('I could not say it', color='red')
+    @periodic(hour='11', minute='35', day_of_week='mon-fri')
+    def announce_lunch_time(self):
+        req = requests.get(settings.SAY_URL, params={
+            'lang': 'es-es',
+            'text': u'Es hora de pedir el almuerzo',
+        })
+        if not req.ok:
+            return self.say('I could not say it', color='red')
 
-		# Print lunch menu.
-		self.print_lunch_menu()
+        # Print lunch menu.
+        self.print_lunch_menu()
 
     def __stop_playback(self):
         """
