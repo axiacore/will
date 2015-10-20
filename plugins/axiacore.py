@@ -147,7 +147,7 @@ class AxiaCorePlugin(WillPlugin):
     def listen_for_menu(self, message):
         self.print_lunch_menu()
 
-    @periodic(hour='11', minute='35', day_of_week='mon-fri')
+    @periodic(hour='11', minute='50', day_of_week='mon-fri')
     def announce_lunch_time(self):
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
