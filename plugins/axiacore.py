@@ -151,7 +151,7 @@ class AxiaCorePlugin(WillPlugin):
     def announce_lunch_time(self):
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
-            'text': u'Es hora de pedir el almuerzo',
+            'text': u'Si, seguimos entregando, seguimos llevando el almuerzo calidoso, ¿quien pide?',
         })
         if not req.ok:
             return self.say('I could not say it', color='red')
