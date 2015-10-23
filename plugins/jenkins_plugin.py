@@ -95,6 +95,7 @@ class JenkinsPlugin(WillPlugin):
             )
 
             polling_url = response.headers['Location']
+            time.sleep(2)
             while True:
                 response = requests.get(
                     polling_url,
