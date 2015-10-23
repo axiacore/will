@@ -90,7 +90,7 @@ class JenkinsPlugin(WillPlugin):
             job = jenkins_list[label]['name']
             self.say(
                 message=message,
-                content='%s is now building.' % job,
+                content='%s is now building...' % job,
                 color='yellow',
             )
 
