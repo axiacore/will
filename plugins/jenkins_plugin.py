@@ -96,7 +96,7 @@ class JenkinsPlugin(WillPlugin):
 
             polling_url = response.headers['Location']
             while True:
-                response = requests.post(
+                response = requests.get(
                     polling_url,
                     auth=(settings.JENKINS_USER, settings.JENKINS_TOKEN),
                     verify=False,
