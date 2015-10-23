@@ -115,9 +115,17 @@ class AxiaCorePlugin(WillPlugin):
 
     @periodic(hour='11', minute='50', day_of_week='mon-fri')
     def lunch_time(self):
+        say_list = (
+            u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
+            u'Llego la hora de raspar la olla. ¿Quien va primero?',
+            u'Tengo un filo, que si me agacho me corto.',
+            u'Otra vez lentejas y agua de panela.',
+            u'Llego la mazamorra calientica.',
+        )
+
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
-            'text': u'Llego la hora de raspar la olla',
+            'text': random.choice(say_list),
         })
         if not req.ok:
             return self.say('I could not say it', color='red')
