@@ -103,7 +103,7 @@ DEFAULT_ROOM = 'AxiaCore'
 # ]
 
 ACL = {
-    "admins": ["camilo", "igor"]
+    'admins': ['camilo']
 }
 
 # Disable SSL checks.  Strongly reccomended this is not set to True.
