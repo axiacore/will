@@ -101,7 +101,7 @@ class JenkinsPlugin(WillPlugin):
                     auth=(settings.JENKINS_USER, settings.JENKINS_TOKEN),
                     verify=False,
                 )
-                if response.ok and response.json()['task']['color']:
+                if response.ok:
                     color = response.json()['task']['color']
                     if color.endswith('_anime'):
                         time.sleep(2)
