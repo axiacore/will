@@ -1,0 +1,6 @@
+Our jenkins jobs are: <br>
+<ol>
+{% for label, job in jenkins_list.items() %}
+    <li><b>{{ label }}</b> &rarr; {{ job.name }}</li>
+{% endfor %}
+</ol>
