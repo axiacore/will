@@ -88,7 +88,7 @@ class JenkinsPlugin(WillPlugin):
         )
         if response.ok:
             job = jenkins_list[label]['name']
-            self.reply(
+            self.say(
                 message=message,
                 content='%s is now building.' % job,
                 color='yellow',
@@ -108,7 +108,7 @@ class JenkinsPlugin(WillPlugin):
                     elif color == 'blue':
                         self.reply(
                             message=message,
-                            content='%s build success. %s' % (
+                            content='%s. Build success. %s' % (
                                 job,
                                 response.json()['executable']['url'],
                             ),
@@ -119,7 +119,7 @@ class JenkinsPlugin(WillPlugin):
                     elif color == 'red':
                         self.reply(
                             message=message,
-                            content='%s build failed. %s' % (
+                            content='%s. Build failed. %s' % (
                                 job,
                                 response.json()['executable']['url'],
                             ),
@@ -130,7 +130,7 @@ class JenkinsPlugin(WillPlugin):
                     else:
                         return self.__return_error(
                             message=message,
-                            content='Status %s not recognized' % color,
+                            content='Status %s is not recognized' % color,
                         )
                 else:
                     return self.__return_error(
