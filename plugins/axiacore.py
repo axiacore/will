@@ -121,6 +121,7 @@ class AxiaCorePlugin(WillPlugin):
             u'Tengo un filo, que si me agacho me corto.',
             u'Otra vez lentejas y agua de panela.',
             u'Llego la mazamorra calientica.',
+            u'A la order el boje, llevelo pues pa acabar con este poquitico',
         )
 
         req = requests.get(settings.SAY_URL, params={
