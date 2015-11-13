@@ -122,6 +122,7 @@ class AxiaCorePlugin(WillPlugin):
             u'Otra vez lentejas y agua de panela.',
             u'Llego la mazamorra calientica.',
             u'A la order el boje, llevelo pues pa acabar con este poquitico',
+            u'Lleve la mela, a luca no mas, a luca',
         )
 
         req = requests.get(settings.SAY_URL, params={
