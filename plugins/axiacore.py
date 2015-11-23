@@ -119,6 +119,7 @@ class AxiaCorePlugin(WillPlugin):
             u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
             u'Llego la hora de raspar la olla. ¿Quien va primero?',
             u'Tengo un filo, que si me agacho me corto.',
+            u'Heee, todo bien mijitos que no les voy a cortar la cara con la mela',
             u'Otra vez lentejas y agua de panela.',
             u'Llego la mazamorra calientica.',
             u'A la order el boje, llevelo pues pa acabar con este poquitico',
