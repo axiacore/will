@@ -123,7 +123,7 @@ class AxiaCorePlugin(WillPlugin):
             u'Llego la mazamorra calientica.',
             u'A la order el boje, llevelo pues pa acabar con este poquitico',
             u'Lleve la mela, a luca no mas, a luca',
-            u'Que paso papás, lo que es con la gurbia es con migo oooomee.',
+            u'Que pasó papás, lo que es con la gurbia es con migo oooomee.',
         )
 
         req = requests.get(settings.SAY_URL, params={
