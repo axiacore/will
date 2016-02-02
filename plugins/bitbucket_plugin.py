@@ -12,7 +12,7 @@ import requests
 class BitbucketPlugin(WillPlugin):
 
     @require_settings('BITBUCKET_USER', 'BITBUCKET_PASS')
-    @respond_to('^create repo (?P<customer>[\w]+) (?P<project>[\w]+)$')
+    @respond_to('^create repo (?P<customer>[\w-]+) (?P<project>[\w-]+)$')
     def create_repository(self, message, customer, project):
         """
         Create a new repository: create repo Google Billing
@@ -22,17 +22,14 @@ class BitbucketPlugin(WillPlugin):
             content="I'm creating a new repo. Hang in there tiger...",
         )
 
-        team = 'axiacore'
         bb = 'https://api.bitbucket.org'
-        slug = '{0}-{1}'.format(customer.lower(), project.lower())
-        name = '{0} - {1}'.format(customer.title(), project.title())
         url = bb + '/2.0/repositories/{0}/{1}/'.format(
-            team,
-            slug,
+            'axiacore',
+            '{0}-{1}'.format(customer.lower(), project.lower()),
         )
         data = {
             'scm': 'git',
-            'name': name,
+            'name': '{0} - {1}'.format(customer.title(), project.title()),
             'is_private': True,
             'fork_policy': 'no_forks',
         }
@@ -53,11 +50,10 @@ class BitbucketPlugin(WillPlugin):
             )
             return
 
-        repo_slug = response['slug']
         repo_name = response['name']
-        url = bb + '/2.0/repositories/{0}/{1}/branch-restrictions/'.format(
-            team,
-            repo_slug,
+        repo_full_name = response['full_name']
+        url = bb + '/2.0/repositories/{0}/branch-restrictions/'.format(
+            repo_full_name,
         )
 
         # Only allow administrators to push to master branch
@@ -103,9 +99,8 @@ class BitbucketPlugin(WillPlugin):
         # Add the deployment keys
         gh = 'https://raw.githubusercontent.com'
         key_url = gh + '/AxiaCore/public-keys/master/development_keys'
-        url = bb + '/1.0/repositories/{0}/{1}/deploy-keys/'.format(
-            team,
-            repo_slug,
+        url = bb + '/1.0/repositories/{0}/deploy-keys/'.format(
+            repo_full_name,
         )
         for key in requests.get(key_url).content.splitlines():
             response = requests.post(
@@ -116,13 +111,11 @@ class BitbucketPlugin(WillPlugin):
 
         # Add the jenkins hook
         jk = 'https://jenkins.axiacode.com/git/notifyCommit?url='
-        jk_url = jk + 'bitbucket.org:{0}/{1}.git'.format(
-            team,
-            repo_slug,
+        jk_url = jk + 'bitbucket.org:{0}.git'.format(
+            repo_full_name,
         )
-        url = bb + '/1.0/repositories/{0}/{1}/services/'.format(
-            team,
-            repo_slug,
+        url = bb + '/1.0/repositories/{0}/services/'.format(
+            repo_full_name,
         )
         response = requests.post(
             url,
@@ -141,8 +134,7 @@ class BitbucketPlugin(WillPlugin):
         )
         self.say(
             message=message,
-            content='Clone URL: git@bitbucket.org:{0}/{1}.git'.format(
-                team,
-                repo_slug,
+            content='Clone URL: git@bitbucket.org:{0}.git'.format(
+                repo_full_name,
             )
         )
