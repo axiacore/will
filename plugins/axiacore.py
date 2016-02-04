@@ -353,7 +353,7 @@ class AxiaCorePlugin(WillPlugin):
         """
         Show emoji list
         """
-        emoji_list = '(lollipop) :lollipop: when improving code format and structure, \n(art) :art: when making visual changes, \n(bug) :bug: when fixing bugs, \n(memo) :memo: when writing documentation, \n(fire) :fire: when removing unused code, \n(sunny) :sunny: alternative emoji for a general improvement, \n(whitecheckmark) :white_check_mark: when fixing tests \n'
+        emoji_list = '\n(lollipop) :lollipop: when improving code format and structure, \n(art) :art: when making visual changes, \n(bug) :bug: when fixing bugs, \n(memo) :memo: when writing documentation, \n(fire) :fire: when removing unused code, \n(sunny) :sunny: alternative emoji for a general improvement, \n(whitecheckmark) :white_check_mark: when fixing tests \n'
 
         self.reply(message, emoji_list)
 
