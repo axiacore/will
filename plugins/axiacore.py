@@ -349,17 +349,17 @@ class AxiaCorePlugin(WillPlugin):
             self.say(req.reason, color='red')
 
     @respond_to('emoji')
-        def show_emoji(self, message):
-            """
-            Show emoji list
-            """
-            emoji_list = ('(lollipop) :lollipop: :lollipop: when improving code format and structure \n',
-                '(art) :art: :art: when making visual changes \n',
-                '(bug) :bug: :bug: when fixing bugs \n',
-                '(memo) :memo: :memo: when writing documentation \n',
-                '(fire) :fire: :fire: when removing unused code \n',
-                '(sunny) :sunny: :sunny: alternative emoji for a general improvement \n',
-                '(white_check_mark) :white_check_mark: :white_check_mark: when fixing tests \n')
+    def show_emoji(self, message):
+        """
+        Show emoji list
+        """
+        emoji_list = ('(lollipop) :lollipop: :lollipop: when improving code format and structure \n',
+            '(art) :art: :art: when making visual changes \n',
+            '(bug) :bug: :bug: when fixing bugs \n',
+            '(memo) :memo: :memo: when writing documentation \n',
+            '(fire) :fire: :fire: when removing unused code \n',
+            '(sunny) :sunny: :sunny: alternative emoji for a general improvement \n',
+            '(white_check_mark) :white_check_mark: :white_check_mark: when fixing tests \n')
 
-            self.reply(message, emoji_list, color='blue')
+        self.reply(message, emoji_list, color='blue')
 
