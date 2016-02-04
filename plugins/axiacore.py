@@ -348,7 +348,7 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.say(req.reason, color='red')
 
-    @respond_to('emoji')
+    @respond_to('^emoji$')
     def show_emoji(self, message):
         """
         Show emoji list
