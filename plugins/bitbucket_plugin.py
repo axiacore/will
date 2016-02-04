@@ -96,19 +96,6 @@ class BitbucketPlugin(WillPlugin):
             auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
-        # Add the deployment keys
-        gh = 'https://raw.githubusercontent.com'
-        key_url = gh + '/AxiaCore/public-keys/master/development_keys'
-        url = bb + '/1.0/repositories/{0}/deploy-keys/'.format(
-            repo_full_name,
-        )
-        for key in requests.get(key_url).content.splitlines():
-            response = requests.post(
-                url,
-                data={'key': key},
-                auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
-            )
-
         # Add the jenkins hook
         jk = 'https://jenkins.axiacode.com/git/notifyCommit?url='
         jk_url = jk + 'bitbucket.org:{0}.git'.format(
