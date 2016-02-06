@@ -10,8 +10,7 @@ import requests
 
 
 class BitbucketPlugin(WillPlugin):
-
-    @require_settings('BITBUCKET_USER', 'BITBUCKET_PASS')
+    @require_settings('BITBUCKET_USER', 'BITBUCKET_PASS', 'BITBUCKET_TEAM', 'JENKINS_URL')
     @respond_to('^create repo (?P<customer>[\w-]+) (?P<project>[\w-]+)$')
     def create_repository(self, message, customer, project):
         """
@@ -24,7 +23,7 @@ class BitbucketPlugin(WillPlugin):
 
         bb = 'https://api.bitbucket.org'
         url = bb + '/2.0/repositories/{0}/{1}/'.format(
-            'axiacore',
+            settings.BITBUCKET_TEAM,
             '{0}-{1}'.format(customer.lower(), project.lower()),
         )
         data = {
@@ -97,8 +96,8 @@ class BitbucketPlugin(WillPlugin):
         )
 
         # Add the jenkins hook
-        jk = 'https://jenkins.axiacode.com/git/notifyCommit?url='
-        jk_url = jk + 'bitbucket.org:{0}.git'.format(
+        jk_url = '{0}git/notifyCommit?url=bitbucket.org:{1}.git'.format(
+            settings.JENKINS_URL,
             repo_full_name,
         )
         url = bb + '/1.0/repositories/{0}/services/'.format(
