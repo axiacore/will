@@ -79,6 +79,18 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not open the door', color='red')
 
+    @require_settings('PLAY_URL')
+    @respond_to('^mp3 (?P<url>.*)$')
+    def play_mp3(self, message, url):
+        """
+        Play an mp3 url: play http://www.noiseaddicts.com/samples_1w72b820/3694.mp3
+        """
+        req = requests.get(settings.PLAY_URL, params={
+            'url': url,
+        })
+        if not req.ok:
+            self.reply(message, 'I could not play it', color='red')
+
     @require_settings('SAY_URL')
     @respond_to('^say (?P<text>.*)$')
     def say_english(self, message, text):
