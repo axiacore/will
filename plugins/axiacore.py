@@ -27,10 +27,7 @@ class AxiaCorePlugin(WillPlugin):
         doc = pq(url='http://whatthecommit.com/')
         text = doc('#content p:first').text()
         self.say(
-            '@{0} want to commit? try this message: {1}'.format(
-                message.sender.nick,
-                text,
-            ),
+            text,
             message=message,
         )
 
@@ -127,7 +124,7 @@ class AxiaCorePlugin(WillPlugin):
 
     @periodic(hour='11', minute='50', day_of_week='mon-fri')
     def lunch_time(self):
-        say_list = (
+        say_list = [
             u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
             u'Llego la hora de raspar la olla. ¿Quien va primero?',
             u'Tengo un filo, que si me agacho me corto.',
@@ -137,7 +134,7 @@ class AxiaCorePlugin(WillPlugin):
             u'A la order el boje, llevelo pues pa acabar con este poquitico',
             u'Lleve la mela, a luca no mas, a luca',
             u'Que pasó papás, lo que es con la gurbia es con migo oooomee.',
-        )
+        ]
 
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
@@ -323,10 +320,10 @@ class AxiaCorePlugin(WillPlugin):
         else:
             self.reply(message, 'I could not play the stream', color='red')
 
-    @respond_to('^fun$')
+    @hear('jaja|haha')
     def something_fun(self, message):
         """
-        Return something funny: fun
+        Return something funny
         """
         req = requests.get(
             'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=day',
@@ -343,7 +340,7 @@ class AxiaCorePlugin(WillPlugin):
         start_hour='7',
         end_hour='17',
         day_of_week='mon-fri',
-        num_times_per_day=2,
+        num_times_per_day=4,
     )
     def hold_my_beer(self):
         """
@@ -368,4 +365,3 @@ class AxiaCorePlugin(WillPlugin):
         emoji_list = '\n(lollipop) :lollipop: when improving code format and structure, \n(art) :art: when making visual changes, \n(bug) :bug: when fixing bugs, \n(memo) :memo: when writing documentation, \n(fire) :fire: when removing unused code, \n(sunny) :sunny: alternative emoji for a general improvement, \n(whitecheckmark) :white_check_mark: when fixing tests \n'
 
         self.reply(message, emoji_list)
-
