@@ -144,7 +144,7 @@ class AxiaCorePlugin(WillPlugin):
             return self.say('I could not say it', color='red')
 
         req = requests.get(
-            'http://domicilios.com/establecimientos/producto/233735/8829.json',
+            'http://domicilios.com/establecimientos/producto/370375/19136',
             headers={'User-Agent': 'Mozilla/5.0'},
         )
 
