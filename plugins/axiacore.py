@@ -122,7 +122,7 @@ class AxiaCorePlugin(WillPlugin):
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
-    @periodic(hour='11', minute='50', day_of_week='mon-fri')
+    @periodic(hour='12', minute='0', day_of_week='mon-fri')
     def lunch_time(self):
         say_list = [
             u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
@@ -319,22 +319,6 @@ class AxiaCorePlugin(WillPlugin):
             )
         else:
             self.reply(message, 'I could not play the stream', color='red')
-
-    @hear('jaja|haha')
-    def something_fun(self, message):
-        """
-        Return something funny
-        """
-        req = requests.get(
-            'http://www.reddit.com/r/holdmybeer/top/.json?sort=top&t=day',
-            headers={'User-Agent': 'Mozilla/5.0'},
-        )
-        if req.ok:
-            elem = random.choice(req.json()['data']['children'])
-            self.reply(message, elem['data']['title'])
-            self.reply(message, elem['data']['url'])
-        else:
-            self.reply(message, req.reason, color='red')
 
     @randomly(
         start_hour='7',
