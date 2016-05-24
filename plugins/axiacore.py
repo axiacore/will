@@ -122,7 +122,7 @@ class AxiaCorePlugin(WillPlugin):
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
-    @periodic(hour='12', minute='0', day_of_week='mon-fri')
+    @periodic(hour='11', minute='50', day_of_week='mon-fri')
     def lunch_time(self):
         say_list = [
             u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
