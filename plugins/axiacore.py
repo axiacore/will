@@ -122,52 +122,6 @@ class AxiaCorePlugin(WillPlugin):
             'text': 'Mompa les desea un feliz día. Los amo a todos.',
         })
 
-    @periodic(hour='11', minute='50', day_of_week='mon-fri')
-    def lunch_time(self):
-        say_list = [
-            u'Seguimos entregando, seguimos llevando el almuerzo calidoso.',
-            u'Llego la hora de raspar la olla. ¿Quien va primero?',
-            u'Tengo un filo, que si me agacho me corto.',
-            u'Heee, todo bien mijitos que no les voy a cortar la cara con la mela',
-            u'Otra vez lentejas y agua de panela.',
-            u'Llego la mazamorra calientica.',
-            u'A la order el boje, llevelo pues pa acabar con este poquitico',
-            u'Lleve la mela, a luca no mas, a luca',
-            u'Que pasó papás, lo que es con la gurbia es con migo oooomee.',
-        ]
-
-        req = requests.get(settings.SAY_URL, params={
-            'lang': 'es-es',
-            'text': random.choice(say_list),
-        })
-        if not req.ok:
-            return self.say('I could not say it', color='red')
-
-        req = requests.get(
-            'http://domicilios.com/establecimientos/producto/370375/19136',
-            headers={'User-Agent': 'Mozilla/5.0'},
-        )
-
-        data = {}
-        letters = 'ABCDEFGHI'
-        for index, group in enumerate(req.json()['grupoextras']):
-            choices = []
-            for number, option in enumerate(group['extras']):
-                choices.append(
-                    u'{0}{1}: {2}'.format(
-                        letters[index],
-                        number,
-                        option['nombre']
-                    )
-                )
-            data[group['nombre']] = choices
-
-        self.say(
-            content=rendered_template('lunch_menu.html', {'data': data}),
-            html=True,
-            notify=True,
-        )
-
     def __stop_playback(self):
         """
         Stop current playback.
