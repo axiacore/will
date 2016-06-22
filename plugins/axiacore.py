@@ -12,13 +12,11 @@ from will.decorators import respond_to
 from will.decorators import randomly
 from will.decorators import require_settings
 from will.decorators import periodic
-from will.decorators import rendered_template
 
 from pyquery import PyQuery as pq
 
 
 class AxiaCorePlugin(WillPlugin):
-
     @hear('commit')
     def talk_on_commit(self, message):
         """
@@ -31,38 +29,21 @@ class AxiaCorePlugin(WillPlugin):
             message=message,
         )
 
-    @hear('culpa')
-    def talk_on_petro(self, message):
-        """
-        Find someone to blame: culpa
-        """
-        base_url = 'https://s3.amazonaws.com/uploads.hipchat.com/50553/341552/'
-        petro_list = (
-            'MucOQkTfZh19ExH/petro-1.jpg',
-            'O0fYobd2noZDzqW/petro-2.jpg',
-            'zG31qjiNMAAATPy/petro-3.jpg',
-            'CeggogfkfI3uKSb/petro-4.jpeg',
-            'jA7DdXUwjMzctwx/petro-5.jpg',
-            'Fr6tAtcKvdtjwJ5/petro-6.jpeg',
-            'DquhpnqGVomkVLu/petro-7.jpg',
-        )
-        self.say('La culpa siempre es de petro', message=message)
-        self.say(base_url + random.choice(petro_list), message=message)
-
     @hear('deploy')
     def talk_on_deploy(self, message):
         """
         Show what happens when deploy: deploy
         """
         doc = pq(url='http://devopsreactions.tumblr.com/random')
-        self.say(doc('.post_title').text(), message=message)
-        self.say(doc('.item img').attr('src'), message=message)
+        self.say('%s %s' % (
+            doc('.post_title').text(), doc('.item img').attr('src')
+        ), message=message)
 
     @require_settings('DOOR_URL', 'SAY_URL')
-    @respond_to('^(op|open|abra)( (?P<text>.*))?$')
+    @respond_to('^(op|open)( (?P<text>.*))?$')
     def open_the_door(self, message, text):
         """
-        Open the door at the office: op or open or abra
+        Open the door at the office: op or open
         """
         req = requests.get(settings.DOOR_URL)
         if req.ok:
@@ -80,7 +61,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^mp3 (?P<url>.*)$')
     def play_mp3(self, message, url):
         """
-        Play an mp3 url: play http://www.noiseaddicts.com/samples_1w72b820/3694.mp3
+        Play an mp3 url: mp3 http://www.noiseaddicts.com/samples_1w72b820/3694.mp3
         """
         req = requests.get(settings.PLAY_URL, params={
             'url': url,
@@ -171,7 +152,7 @@ class AxiaCorePlugin(WillPlugin):
         self.reply(message, 'Silence please!')
 
     @require_settings('AUDIO_URL')
-    @periodic(hour='17', minute='0', day_of_week='mon-fri')
+    @periodic(hour='18', minute='0')
     def stop_on_schedule(self):
         self.__stop_playback()
         self.__clear_tracklist()
@@ -290,8 +271,7 @@ class AxiaCorePlugin(WillPlugin):
         )
         if req.ok:
             elem = random.choice(req.json()['data']['children'])
-            self.say(elem['data']['title'])
-            self.say(elem['data']['url'])
+            self.say('%s %s' % (elem['data']['title'], elem['data']['url']))
         else:
             self.say(req.reason, color='red')
 
