@@ -292,7 +292,7 @@ class AxiaCorePlugin(WillPlugin):
         """
         self.reply(
             message=message,
-            content=rendered_template('boss_list.html'),
+            content=rendered_template('boss_list.html', {}),
             html=True,
             notify=True,
         )
