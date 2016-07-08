@@ -6,12 +6,13 @@ import random
 import requests
 
 from will import settings
-from will.plugin import WillPlugin
 from will.decorators import hear
-from will.decorators import respond_to
-from will.decorators import randomly
-from will.decorators import require_settings
 from will.decorators import periodic
+from will.decorators import randomly
+from will.decorators import rendered_template
+from will.decorators import require_settings
+from will.decorators import respond_to
+from will.plugin import WillPlugin
 
 from pyquery import PyQuery as pq
 
@@ -284,76 +285,14 @@ class AxiaCorePlugin(WillPlugin):
 
         self.reply(message, emoji_list)
 
-    @respond_to('^patrón$')
-    def show_patron(self, message):
+    @respond_to('^boss$')
+    def show_boss(self, message):
         """
         Show owner list
         """
-        patron_list = """/quote <table style="border: solid 1px;">
-    <tbody>
-        <tr>
-            <th>Project owner</th>
-            <th>Project</th>
-            <th>Alternative reviewer</th>
-        </tr>
-        <tr>
-            <td>Camilo Nova</td>
-            <td>
-                <table>
-                  <tbody><tr><td>AE</td></tr>
-                    <tr><td>CQ</td></tr>
-                    <tr><td>PLC</td></tr>
-                </tbody></table>
-            </td>
-            <td>
-                <table>
-                    <tbody>
-                        <tr><td>Rodrigo Cubillos</td></tr>
-                        <tr><td>Pablo Vallejo y Felipe Gonzalez</td></tr>
-                        <tr><td>Felipe Gonzalez</td></tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td>Felipe Gonzalez</td>
-            <td>
-                <table>
-                    <tbody>
-                        <tr><td>MA</td></tr>
-                    </tbody>
-                </table>
-            </td>
-            <td>
-                <table>
-                    <tbody>
-                        <tr><td>Pablo Vallejo y Camilo Nova</td></tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td>Rodrigo Cubillos</td>
-            <td>
-                <table>
-                    <tbody>
-                        <tr><td>SPAP</td></tr>
-                        <tr><td>GCL</td></tr>
-                        <tr><td>RLZ</td></tr>
-                    </tbody>
-                </table>
-            </td>
-            <td>
-                <table>
-                    <tbody>
-                        <tr><td>Pablo Vallejo y Camilo Nova</td></tr>
-                        <tr><td>Camilo Nova</td></tr>
-                        <tr><td>Pablo Vallejo</td></tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>"""
-
-        self.reply(message, patron_list)
+        self.reply(
+            message=message,
+            content=rendered_template('boss_list.html'),
+            html=True,
+            notify=True,
+        )
