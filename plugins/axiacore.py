@@ -278,19 +278,16 @@ class AxiaCorePlugin(WillPlugin):
 
     @respond_to('^emoji$')
     def show_emoji(self, message):
-        """
-        Show emoji list
-        """
-        emoji_list = '\n(lollipop) :lollipop: when improving code format and structure, \n(art) :art: when making visual changes, \n(bug) :bug: when fixing bugs, \n(memo) :memo: when writing documentation, \n(fire) :fire: when removing unused code, \n(sunny) :sunny: alternative emoji for a general improvement, \n(whitecheckmark) :white_check_mark: when fixing tests \n'
-
-        self.reply(message, emoji_list)
+        self.say(
+            message=message,
+            content=rendered_template('emoji_list.html', {}),
+            html=True,
+            notify=True,
+        )
 
     @respond_to('^boss$')
     def show_boss(self, message):
-        """
-        Show owner list
-        """
-        self.reply(
+        self.say(
             message=message,
             content=rendered_template('boss_list.html', {}),
             html=True,
