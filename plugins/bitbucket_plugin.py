@@ -14,7 +14,7 @@ class BitbucketPlugin(WillPlugin):
     @respond_to('^create repo (?P<customer>[\w-]+) (?P<project>[\w-]+)$')
     def create_repository(self, message, customer, project):
         """
-        Create a new repository: create repo Google Billing
+        create repo ___ ___: Create a new repository for a customer and a project
         """
         self.say(
             message=message,

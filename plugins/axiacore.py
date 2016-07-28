@@ -21,7 +21,7 @@ class AxiaCorePlugin(WillPlugin):
     @hear('commit')
     def talk_on_commit(self, message):
         """
-        Show a cool commit message: commit
+        commit: Show a cool commit message
         """
         doc = pq(url='http://whatthecommit.com/')
         text = doc('#content p:first').text()
@@ -33,7 +33,7 @@ class AxiaCorePlugin(WillPlugin):
     @hear('deploy')
     def talk_on_deploy(self, message):
         """
-        Show what happens when deploy: deploy
+        deploy: Show what happens when we deploy
         """
         doc = pq(url='http://devopsreactions.tumblr.com/random')
         self.say('%s %s' % (
@@ -41,16 +41,16 @@ class AxiaCorePlugin(WillPlugin):
         ), message=message)
 
     @require_settings('DOOR_URL', 'SAY_URL')
-    @respond_to('^(op|open)( (?P<text>.*))?$')
+    @respond_to('^(op|open)?$')
     def open_the_door(self, message, text):
         """
-        Open the door at the office: op or open
+        op or open ___: Open the door at the office
         """
         req = requests.get(settings.DOOR_URL)
         if req.ok:
             req = requests.get(settings.SAY_URL, params={
                 'lang': 'es-es',
-                'text': text,
+                'text': 'Siga que atras hay puesto',
             })
             self.reply(
                 message, 'Say welcome %s!' % message.sender.nick.title()
@@ -62,7 +62,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^mp3 (?P<url>.*)$')
     def play_mp3(self, message, url):
         """
-        Play an mp3 url: mp3 http://www.noiseaddicts.com/samples_1w72b820/3694.mp3
+        mp3 ___: Play an mp3 url
         """
         req = requests.get(settings.PLAY_URL, params={
             'url': url,
@@ -74,7 +74,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^say (?P<text>.*)$')
     def say_english(self, message, text):
         """
-        Say a text at the office: say hello
+        say ___: Say an english text at the office
         """
         req = requests.get(settings.SAY_URL, params={
             'lang': 'en-us',
@@ -87,7 +87,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^diga (?P<text>.*)$')
     def say_spanish(self, message, text):
         """
-        Say a text at the office: diga hola
+        diga ___: Say a spanish text at the office
         """
         req = requests.get(settings.SAY_URL, params={
             'lang': 'es-es',
@@ -135,10 +135,10 @@ class AxiaCorePlugin(WillPlugin):
         return req.ok
 
     @require_settings('AUDIO_URL')
-    @respond_to('^stop$')
+    @respond_to('^silence$')
     def stop_the_beat(self, message):
         """
-        Stop the music at the office: stop
+        silence: Stop the music at the office
         """
         success = self.__stop_playback()
         if not success:
@@ -163,7 +163,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^play$|^play (?P<url>.*)$')
     def play_the_beat(self, message, url=None):
         """
-        Play music at the office: play or play URL
+        play or play ___: Play random radio or a url at the office
         """
         data = {
             'id': 1,
@@ -279,7 +279,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^emoji$')
     def show_emoji(self, message):
         """
-        Shows the emoji used for commit messages
+        emoji: Shows the emoji used for commit messages
         """
         self.say(
             message=message,
@@ -291,7 +291,7 @@ class AxiaCorePlugin(WillPlugin):
     @respond_to('^boss$')
     def show_boss(self, message):
         """
-        Shows who is responsible for merging Pull Requests
+        boss: Shows who is responsible for merging Pull Requests
         """
         self.say(
             message=message,

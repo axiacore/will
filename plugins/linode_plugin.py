@@ -35,7 +35,7 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode status$')
     def linode_status(self, message):
         """
-        Get a list of available linodes: linode status
+        linode status: Get a list of available linodes statuses
         """
         self.say(
             message=message,
@@ -73,7 +73,7 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode reboot (?P<label>[-\w]+)$')
     def linode_reboot(self, message, label):
         """
-        Reboot a linode: linode reboot my-linode-label
+        linode reboot ___: Reboot a linode for a given label
         """
         self.say(
             message=message,
@@ -107,7 +107,7 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode create (?P<label>[-\w]+)$', admin_only=True)
     def linode_create(self, message, label=None):
         """
-        Create a linode: linode create boom
+        linode create ___: Create a linode with a given label
         """
         self.say(
             message=message,
@@ -141,11 +141,11 @@ class LinodePlugin(WillPlugin):
         # Create distribution
         password = self.__randompass()
         response = linode_api.linode_disk_createfromdistribution(
-              LinodeId=linode_id,
-              DistributionID=DISTRO,
-              Label='Ubuntu 14.04 LTS Disk',
-              Size=DATA_SIZE,
-              rootPass=password,
+            LinodeId=linode_id,
+            DistributionID=DISTRO,
+            Label='Ubuntu 14.04 LTS Disk',
+            Size=DATA_SIZE,
+            rootPass=password,
         )
         disk_list = []
         disk_list.append(response['DiskID'])
@@ -193,7 +193,7 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode dns-add (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+) (?P<ip>\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})$')
     def linode_dns_add(self, message, full_domain, ip):
         """
-        Add a DNS record for a domain: linode dns-add my.domain.co 8.8.8.8
+        linode dns-add ___ ___: Add a DNS record for a given domain and IP
         """
         self.say(
             message=message,
@@ -223,8 +223,8 @@ class LinodePlugin(WillPlugin):
         )
         for linode_subdomain in subdomain_list:
             if (
-                subdomain == linode_subdomain['NAME']
-                and linode_subdomain['TYPE'].upper() == 'A'
+                subdomain == linode_subdomain['NAME'] and
+                linode_subdomain['TYPE'].upper() == 'A'
             ):
                 return self.__return_error(
                     message=message,
@@ -253,7 +253,7 @@ class LinodePlugin(WillPlugin):
     @respond_to('^linode dns-remove (?P<full_domain>[a-z0-9]+\.[a-z0-9]+\.[a-z0-9]+)$')
     def linode_dns_remove(self, message, full_domain=None):
         """
-        Remove a DNS record for a domain: linode dns-remove my.domain.co
+        linode dns-remove ___: Remove a DNS record for a given domain
         """
         self.say(
             message=message,
@@ -284,8 +284,8 @@ class LinodePlugin(WillPlugin):
         )
         for linode_subdomain in subdomain_list:
             if (
-                subdomain == linode_subdomain['NAME']
-                and linode_subdomain['TYPE'].upper() == 'A'
+                subdomain == linode_subdomain['NAME'] and
+                linode_subdomain['TYPE'].upper() == 'A'
             ):
                 resource_id = linode_subdomain['RESOURCEID']
                 break

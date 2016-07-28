@@ -23,7 +23,7 @@ class JenkinsPlugin(WillPlugin):
     @respond_to('^jenkins jobs$')
     def jenkins_list(self, message):
         """
-        Get a list of available jenkins jobs: jenkins jobs
+        jenkins jobs: Get a list of available jenkins jobs
         """
         self.say(
             message=message,
@@ -66,7 +66,7 @@ class JenkinsPlugin(WillPlugin):
     @respond_to('^jenkins build (?P<label>[-\w]+)$')
     def jenkins_build(self, message, label):
         """
-        Build a jenkins job: jenkins build axiacore-website-testing
+        jenkins build ___: Build a jenkins job for a given label
         """
         self.say(
             message=message,
