@@ -278,6 +278,9 @@ class AxiaCorePlugin(WillPlugin):
 
     @respond_to('^emoji$')
     def show_emoji(self, message):
+        """
+        Shows the emoji used for commit messages
+        """
         self.say(
             message=message,
             content=rendered_template('emoji_list.html', {}),
@@ -287,6 +290,9 @@ class AxiaCorePlugin(WillPlugin):
 
     @respond_to('^boss$')
     def show_boss(self, message):
+        """
+        Shows who is responsible for merging Pull Requests
+        """
         self.say(
             message=message,
             content=rendered_template('boss_list.html', {}),
