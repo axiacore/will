@@ -42,7 +42,7 @@ class AxiaCorePlugin(WillPlugin):
 
     @require_settings('DOOR_URL', 'SAY_URL')
     @respond_to('^(op|open)?$')
-    def open_the_door(self, message, text):
+    def open_the_door(self, message):
         """
         op or open ___: Open the door at the office
         """
