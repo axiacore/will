@@ -10,7 +10,7 @@ import requests
 
 
 class BitbucketPlugin(WillPlugin):
-    @require_settings('BITBUCKET_API_KEY', 'BITBUCKET_TEAM', 'JENKINS_URL')
+    @require_settings('BITBUCKET_USER', 'BITBUCKET_PASS', 'BITBUCKET_TEAM', 'JENKINS_URL')
     @respond_to('^create repo (?P<customer>[\w-]+) (?P<project>[\w-]+)$')
     def create_repository(self, message, customer, project):
         """
@@ -37,7 +37,7 @@ class BitbucketPlugin(WillPlugin):
         response = requests.post(
             url,
             data=data,
-            headers={'Autorization': settings.BITBUCKET_API_KEY},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         ).json()
 
         if 'error' in response:
@@ -67,10 +67,8 @@ class BitbucketPlugin(WillPlugin):
         response = requests.post(
             url,
             data=json.dumps(data),
-            headers={
-                'Autorization': settings.BITBUCKET_API_KEY,
-                'Content-Type': 'application/json',
-            },
+            headers={'Content-Type': 'application/json'},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
         # Prevent deletion of the master branch
@@ -81,10 +79,8 @@ class BitbucketPlugin(WillPlugin):
         response = requests.post(
             url,
             data=json.dumps(data),
-            headers={
-                'Autorization': settings.BITBUCKET_API_KEY,
-                'Content-Type': 'application/json',
-            },
+            headers={'Content-Type': 'application/json'},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
         # Prevent force rewrite of the master branch
@@ -95,10 +91,8 @@ class BitbucketPlugin(WillPlugin):
         response = requests.post(
             url,
             data=json.dumps(data),
-            headers={
-                'Autorization': settings.BITBUCKET_API_KEY,
-                'Content-Type': 'application/json',
-            },
+            headers={'Content-Type': 'application/json'},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
         # Add the jenkins hook
@@ -115,7 +109,7 @@ class BitbucketPlugin(WillPlugin):
                 'type': 'POST',
                 'URL': jk_url,
             },
-            headers={'Autorization': settings.BITBUCKET_API_KEY},
+            auth=(settings.BITBUCKET_USER, settings.BITBUCKET_PASS),
         )
 
         self.reply(
