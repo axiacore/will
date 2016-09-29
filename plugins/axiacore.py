@@ -36,14 +36,14 @@ class AxiaCorePlugin(WillPlugin):
         day_of_week='mon-fri',
         num_times_per_day=4,
     )
-    def random_on_deploy(self, message):
+    def random_on_deploy(self):
         """
         deploy: Show what happens when we deploy
         """
         doc = pq(url='http://devopsreactions.tumblr.com/random')
         self.say('%s %s' % (
             doc('.post_title').text(), doc('.item img').attr('src')
-        ), message=message)
+        ))
 
     @require_settings('DOOR_URL', 'SAY_URL')
     @respond_to('^(op|open)?$')
