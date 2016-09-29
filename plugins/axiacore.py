@@ -30,8 +30,13 @@ class AxiaCorePlugin(WillPlugin):
             message=message,
         )
 
-    @hear('deploy')
-    def talk_on_deploy(self, message):
+    @randomly(
+        start_hour='7',
+        end_hour='17',
+        day_of_week='mon-fri',
+        num_times_per_day=4,
+    )
+    def random_on_deploy(self, message):
         """
         deploy: Show what happens when we deploy
         """
